@@ -2,6 +2,9 @@ import sys
 import re
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from ebooklib import epub
+import smtplib
+import os
+from email.message import EmailMessage
 
 # Try to import pytube for fetching video title
 try:
@@ -131,6 +134,34 @@ def save_epub(title, video_id, chapters, output_filename):
     epub.write_epub(output_filename, book)
     print(f"Saved transcript as {output_filename}")
 
+def send_to_kindle(epub_path, book_title):
+    kindle_email = os.environ.get('KINDLE_EMAIL')
+    sender_email = os.environ.get('SENDER_EMAIL')
+    sender_app_password = os.environ.get('SENDER_APP_PASSWORD')
+    
+    if not (kindle_email and sender_email and sender_app_password):
+        print("Missing environment variables for Kindle sending. Please set KINDLE_EMAIL, SENDER_EMAIL, and SENDER_APP_PASSWORD.")
+        return
+    
+    msg = EmailMessage()
+    msg['Subject'] = book_title
+    msg['From'] = sender_email
+    msg['To'] = kindle_email
+    msg.set_content('Convert')  # 'Convert' in the body will convert to Kindle format if possible
+    
+    with open(epub_path, 'rb') as f:
+        file_data = f.read()
+        file_name = os.path.basename(epub_path)
+    msg.add_attachment(file_data, maintype='application', subtype='epub+zip', filename=file_name)
+    
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(sender_email, sender_app_password)
+            smtp.send_message(msg)
+        print(f"Sent {file_name} to Kindle email: {kindle_email}")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python main.py <YouTube URL>")
@@ -147,6 +178,7 @@ def main():
     chapters = transcript_sections_to_epub_chapters(sections)
     output_filename = f"{safe_title}.epub"
     save_epub(video_title, video_id, chapters, output_filename)
+    send_to_kindle(output_filename, video_title)
 
 if __name__ == "__main__":
     try:
