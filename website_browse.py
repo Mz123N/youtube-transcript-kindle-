@@ -31,10 +31,21 @@ if st.button("Generate and Send to Kindle"):
         st.write("Saving file to:", output_filename)
 
         # 2. Generate transcript, chapters, and save epub
+        st.write("Step 1: Fetching transcript...")
         transcript = fetch_transcript(video_id)
+        st.write(f"Transcript fetched: {len(transcript)} entries")
+        
+        st.write("Step 2: Grouping into sections...")
         sections = group_transcript_by_interval(transcript, interval_seconds=1200)
+        st.write(f"Sections created: {len(sections)}")
+        
+        st.write("Step 3: Creating chapters...")
         chapters = transcript_sections_to_epub_chapters(sections)
+        st.write(f"Chapters created: {len(chapters)}")
+        
+        st.write("Step 4: Saving EPUB file...")
         save_epub(video_title, video_id, chapters, output_filename)
+        st.write("EPUB file saved successfully!")
 
         # 3. Send to Kindle
         if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
