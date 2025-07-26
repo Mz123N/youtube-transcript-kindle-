@@ -134,14 +134,15 @@ def save_epub(title, video_id, chapters, output_filename):
     epub.write_epub(output_filename, book)
     print(f"Saved transcript as {output_filename}")
 
-def send_to_kindle(epub_path, book_title):
-    kindle_email = os.environ.get('KINDLE_EMAIL')
-    sender_email = os.environ.get('SENDER_EMAIL')
-    sender_app_password = os.environ.get('SENDER_APP_PASSWORD')
+def send_to_kindle(epub_path, book_title, kindle_email=None, sender_email=None, sender_app_password=None):
+    # Use provided parameters or fall back to environment variables
+    kindle_email = kindle_email or os.environ.get('KINDLE_EMAIL')
+    sender_email = sender_email or os.environ.get('SENDER_EMAIL')
+    sender_app_password = sender_app_password or os.environ.get('SENDER_APP_PASSWORD')
     
     if not (kindle_email and sender_email and sender_app_password):
-        print("Missing environment variables for Kindle sending. Please set KINDLE_EMAIL, SENDER_EMAIL, and SENDER_APP_PASSWORD.")
-        return
+        print("Missing email credentials for Kindle sending.")
+        return False
     
     msg = EmailMessage()
     msg['Subject'] = book_title
@@ -159,8 +160,10 @@ def send_to_kindle(epub_path, book_title):
             smtp.login(sender_email, sender_app_password)
             smtp.send_message(msg)
         print(f"Sent {file_name} to Kindle email: {kindle_email}")
+        return True
     except Exception as e:
         print(f"Failed to send email: {e}")
+        return False
 
 def main():
     if len(sys.argv) != 2:

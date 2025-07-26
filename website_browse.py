@@ -37,9 +37,10 @@ if st.button("Generate and Send to Kindle"):
         save_epub(video_title, video_id, chapters, output_filename)
 
         # 3. Send to Kindle
-        send_to_kindle(output_filename, video_title)
-
-        st.success(f"Book sent to Kindle successfully! Saved as {output_filename}")
+        if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
+            st.success(f"Book sent to Kindle successfully! Saved as {output_filename}")
+        else:
+            st.error("Failed to send to Kindle. Please check your email credentials.")
 
     except Exception as e:
         st.error("An error occurred while generating or saving the book.")
