@@ -7,13 +7,15 @@ from main import (
     group_transcript_by_interval,
     transcript_sections_to_epub_chapters,
     save_epub,
-    send_to_kindle
+    send_to_kindle,
+    generate_pdf
 )
 
 st.title("YouTube Transcript to Kindle")
 
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
+format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
 kindle_email = st.text_input("Kindle Email")
 sender_email = st.text_input("Sender Gmail")
 sender_app_password = st.text_input("Sender App Password", type="password")
@@ -27,10 +29,8 @@ if st.button("Generate and Send to Kindle"):
         video_id = extract_video_id(youtube_url)
         video_title = book_title  # Use the title from the form
         safe_title = sanitize_filename(video_title)
-        output_filename = f"{safe_title}.epub"
-        st.write("Saving file to:", output_filename)
-
-        # 2. Generate transcript, chapters, and save epub
+        
+        # 2. Generate transcript and sections
         st.write("Step 1: Fetching transcript...")
         transcript = fetch_transcript(video_id)
         st.write(f"Transcript fetched: {len(transcript)} entries")
@@ -39,13 +39,19 @@ if st.button("Generate and Send to Kindle"):
         sections = group_transcript_by_interval(transcript, interval_seconds=1200)
         st.write(f"Sections created: {len(sections)}")
         
-        st.write("Step 3: Creating chapters...")
-        chapters = transcript_sections_to_epub_chapters(sections)
-        st.write(f"Chapters created: {len(chapters)}")
+        # 3. Generate file based on format choice
+        st.write(f"Step 3: Generating {format_choice} file...")
+        if format_choice == "EPUB":
+            output_filename = f"{safe_title}.epub"
+            st.write("Saving EPUB file to:", output_filename)
+            chapters = transcript_sections_to_epub_chapters(sections)
+            save_epub(video_title, video_id, chapters, output_filename)
+        else:  # PDF
+            output_filename = f"{safe_title}.pdf"
+            st.write("Saving PDF file to:", output_filename)
+            generate_pdf(video_title, sections, output_filename)
         
-        st.write("Step 4: Saving EPUB file...")
-        save_epub(video_title, video_id, chapters, output_filename)
-        st.write("EPUB file saved successfully!")
+        st.write(f"File generated successfully: {output_filename}")
 
         # 3. Send to Kindle
         if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):

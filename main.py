@@ -5,6 +5,10 @@ from ebooklib import epub
 import smtplib
 import os
 from email.message import EmailMessage
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
 
 # Try to import pytube for fetching video title
 try:
@@ -133,6 +137,53 @@ def save_epub(title, video_id, chapters, output_filename):
     book.spine = spine
     epub.write_epub(output_filename, book)
     print(f"Saved transcript as {output_filename}")
+
+def generate_pdf(title, sections, output_filename):
+    """Generate a PDF file from transcript sections."""
+    doc = SimpleDocTemplate(output_filename, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+    
+    # Title
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=16,
+        spaceAfter=30,
+        alignment=1  # Center alignment
+    )
+    story.append(Paragraph(title, title_style))
+    story.append(Spacer(1, 20))
+    
+    # Add subtitle
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Heading2'],
+        fontSize=12,
+        spaceAfter=20,
+        alignment=1
+    )
+    story.append(Paragraph("YouTube Transcript", subtitle_style))
+    story.append(Spacer(1, 30))
+    
+    # Content
+    for idx, (start, end, entries) in enumerate(sections, 1):
+        # Section header
+        section_title = f"Section {idx}: {format_timestamp(start)}–{format_timestamp(end)}"
+        story.append(Paragraph(section_title, styles['Heading2']))
+        story.append(Spacer(1, 12))
+        
+        # Combine all text in the section
+        section_text = ""
+        for entry in entries:
+            section_text += entry.text.replace('\n', ' ') + " "
+        
+        # Add text as paragraph
+        story.append(Paragraph(section_text, styles['Normal']))
+        story.append(Spacer(1, 20))
+    
+    doc.build(story)
+    print(f"Saved PDF as {output_filename}")
 
 def send_to_kindle(epub_path, book_title, kindle_email=None, sender_email=None, sender_app_password=None):
     # Use provided parameters or fall back to environment variables
