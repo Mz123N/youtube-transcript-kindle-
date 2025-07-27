@@ -16,7 +16,7 @@ from main import (
     send_file_via_email
 )
 
-st.title("YouTube Transcript to Kindle")
+st.title("Turn Your Favorite Podcasts into E-Books")
 
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
