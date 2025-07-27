@@ -8,7 +8,8 @@ from main import (
     transcript_sections_to_epub_chapters,
     save_epub,
     send_to_kindle,
-    generate_pdf
+    generate_pdf,
+    send_file_via_email
 )
 
 st.title("YouTube Transcript to Kindle")
@@ -16,11 +17,21 @@ st.title("YouTube Transcript to Kindle")
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
 format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
-kindle_email = st.text_input("Kindle Email")
+user_email = st.text_input("Your Email (to receive the file)")
+
+# Email delivery credentials (needed for both email and Kindle delivery)
 sender_email = st.text_input("Sender Gmail")
 sender_app_password = st.text_input("Sender App Password", type="password")
 
-if st.button("Generate and Send to Kindle"):
+# Kindle delivery option
+send_to_kindle_option = st.checkbox("Send to Kindle directly")
+
+if send_to_kindle_option:
+    kindle_email = st.text_input("Kindle Email")
+else:
+    kindle_email = None
+
+if st.button("Generate and Send"):
     try:
         st.info("Starting process...")
         st.write("Current working directory:", os.getcwd())
@@ -53,11 +64,32 @@ if st.button("Generate and Send to Kindle"):
         
         st.write(f"File generated successfully: {output_filename}")
 
-        # 3. Send to Kindle
-        if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
-            st.success(f"Book sent to Kindle successfully! Saved as {output_filename}")
+        # 4. Handle delivery based on user choice
+        success_messages = []
+        
+        # Always send to user's email
+        if user_email:
+            st.write(f"Attempting to send file to email: {user_email}")
+            if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
+                success_messages.append(f"File sent to your email: {user_email}")
+                st.write("Email sent successfully!")
+            else:
+                st.error("Failed to send file to your email. Please check your email address and try again.")
         else:
-            st.error("Failed to send to Kindle. Please check your email credentials.")
+            st.write("No user email provided, skipping email delivery")
+        
+        # Send to Kindle if option is selected
+        if send_to_kindle_option and kindle_email:
+            if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
+                success_messages.append(f"File sent to Kindle: {kindle_email}")
+            else:
+                st.error("Failed to send to Kindle. Please check your Kindle email credentials.")
+        
+        # Show success message
+        if success_messages:
+            st.success("Success! " + " | ".join(success_messages))
+        else:
+            st.warning("File generated but no delivery method selected.")
 
     except Exception as e:
         st.error("An error occurred while generating or saving the book.")

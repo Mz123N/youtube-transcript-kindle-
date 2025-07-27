@@ -185,6 +185,53 @@ def generate_pdf(title, sections, output_filename):
     doc.build(story)
     print(f"Saved PDF as {output_filename}")
 
+def send_file_via_email(file_path, user_email, book_title, sender_email, sender_app_password):
+    """Send the generated file to user's email."""
+    if not (user_email and sender_email and sender_app_password):
+        print("Missing email credentials for file delivery.")
+        return False
+    
+    msg = EmailMessage()
+    msg['Subject'] = f"Your YouTube Transcript: {book_title}"
+    msg['From'] = sender_email
+    msg['To'] = user_email
+    msg.set_content(f'''
+    Hi there!
+    
+    Here's your YouTube transcript as requested: "{book_title}"
+    
+    The file is attached to this email.
+    
+    Enjoy reading!
+    ''')
+    
+    # Determine file type and MIME type
+    file_extension = os.path.splitext(file_path)[1].lower()
+    if file_extension == '.epub':
+        maintype = 'application'
+        subtype = 'epub+zip'
+    elif file_extension == '.pdf':
+        maintype = 'application'
+        subtype = 'pdf'
+    else:
+        maintype = 'application'
+        subtype = 'octet-stream'
+    
+    try:
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+            file_name = os.path.basename(file_path)
+        msg.add_attachment(file_data, maintype=maintype, subtype=subtype, filename=file_name)
+        
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(sender_email, sender_app_password)
+            smtp.send_message(msg)
+        print(f"Sent {file_name} to {user_email}")
+        return True
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return False
+
 def send_to_kindle(epub_path, book_title, kindle_email=None, sender_email=None, sender_app_password=None):
     # Use provided parameters or fall back to environment variables
     kindle_email = kindle_email or os.environ.get('KINDLE_EMAIL')
