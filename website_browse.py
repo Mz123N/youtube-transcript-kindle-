@@ -1,5 +1,9 @@
 import os
 import streamlit as st
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 from main import (
     extract_video_id,
     sanitize_filename,
@@ -19,9 +23,12 @@ book_title = st.text_input("Book Title")
 format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
 user_email = st.text_input("Your Email (to receive the file)")
 
-# Email delivery credentials (needed for both email and Kindle delivery)
-sender_email = st.text_input("Sender Gmail")
-sender_app_password = st.text_input("Sender App Password", type="password")
+# Set default sender credentials (your email)
+sender_email = "mengnan188@gmail.com"  # Your Gmail address
+sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_here')  # Get from environment variable
+
+# Debug: Check if password is loaded (remove this after testing)
+st.write(f"Password loaded: {'Yes' if sender_app_password != 'your_app_password_here' else 'No'}")
 
 # Kindle delivery option
 send_to_kindle_option = st.checkbox("Send to Kindle directly")
@@ -70,6 +77,9 @@ if st.button("Generate and Send"):
         # Always send to user's email
         if user_email:
             st.write(f"Attempting to send file to email: {user_email}")
+            st.write(f"Using sender email: {sender_email}")
+            st.write(f"Password loaded: {'Yes' if sender_app_password and sender_app_password != 'your_app_password_here' else 'No'}")
+            
             if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
                 success_messages.append(f"File sent to your email: {user_email}")
                 st.write("Email sent successfully!")

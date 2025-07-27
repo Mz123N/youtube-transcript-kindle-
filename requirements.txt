@@ -2,4 +2,5 @@ streamlit
 youtube-transcript-api
 ebooklib
 pytube
-reportlab 
+reportlab
+python-dotenv 
