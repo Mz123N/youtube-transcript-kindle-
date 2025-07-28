@@ -254,7 +254,7 @@ if st.button("Generate"):
             st.error(f"Error preparing download: {e}")
 
         # 5. Step 2: Dynamic Delivery Options
-        st.markdown("### 📧 Delivery Options")
+        st.markdown("### 📧 Or send directly to your email or Kindle!")
         
         # Email input
         user_email = st.text_input("Your Email (to receive the file)")
