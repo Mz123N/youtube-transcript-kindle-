@@ -121,12 +121,12 @@ quotes = [
     {
         "text": "The most important skill for getting rich is becoming a perpetual learner.",
         "author": "Naval Ravikant",
-        "image": "https://pbs.twimg.com/profile_images/1256841238298292232/ycqwaMI2_400x400.jpg"
+        "image": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg"
     },
     {
         "text": "Read what you love until you love to read.",
         "author": "Naval Ravikant",
-        "image": "https://pbs.twimg.com/profile_images/1256841238298292232/ycqwaMI2_400x400.jpg"
+        "image": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg"
     },
     {
         "text": "The best investment you can make is in yourself.",
