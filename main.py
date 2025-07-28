@@ -9,6 +9,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 # Try to import playwright for better transcript fetching
 try:
@@ -286,10 +288,27 @@ def save_epub(title, video_id, chapters, output_filename):
     print(f"Saved transcript as {output_filename}")
 
 def generate_pdf(title, sections, output_filename):
-    """Generate a PDF file from transcript sections."""
+    """Generate a PDF file from transcript sections with Chinese font support."""
     doc = SimpleDocTemplate(output_filename, pagesize=letter)
     styles = getSampleStyleSheet()
     story = []
+    
+    # Try to register Chinese fonts
+    try:
+        # Try to use system fonts that support Chinese
+        pdfmetrics.registerFont(TTFont('ArialUnicode', '/System/Library/Fonts/Arial Unicode MS.ttf'))
+        chinese_font = 'ArialUnicode'
+    except:
+        try:
+            # Fallback to other common Chinese fonts
+            pdfmetrics.registerFont(TTFont('PingFang', '/System/Library/Fonts/PingFang.ttc'))
+            chinese_font = 'PingFang'
+        except:
+            try:
+                # Try Helvetica as last resort
+                chinese_font = 'Helvetica'
+            except:
+                chinese_font = 'Helvetica'
     
     # Title
     title_style = ParagraphStyle(
@@ -297,7 +316,8 @@ def generate_pdf(title, sections, output_filename):
         parent=styles['Heading1'],
         fontSize=16,
         spaceAfter=30,
-        alignment=1  # Center alignment
+        alignment=1,  # Center alignment
+        fontName=chinese_font
     )
     story.append(Paragraph(title, title_style))
     story.append(Spacer(1, 20))
@@ -308,7 +328,8 @@ def generate_pdf(title, sections, output_filename):
         parent=styles['Heading2'],
         fontSize=12,
         spaceAfter=20,
-        alignment=1
+        alignment=1,
+        fontName=chinese_font
     )
     story.append(Paragraph("YouTube Transcript", subtitle_style))
     story.append(Spacer(1, 30))
@@ -317,7 +338,12 @@ def generate_pdf(title, sections, output_filename):
     for idx, (start, end, entries) in enumerate(sections, 1):
         # Section header
         section_title = f"Section {idx}: {format_timestamp(start)}–{format_timestamp(end)}"
-        story.append(Paragraph(section_title, styles['Heading2']))
+        header_style = ParagraphStyle(
+            'SectionHeader',
+            parent=styles['Heading2'],
+            fontName=chinese_font
+        )
+        story.append(Paragraph(section_title, header_style))
         story.append(Spacer(1, 12))
         
         # Combine all text in the section
@@ -325,8 +351,15 @@ def generate_pdf(title, sections, output_filename):
         for entry in entries:
             section_text += entry.text.replace('\n', ' ') + " "
         
-        # Add text as paragraph
-        story.append(Paragraph(section_text, styles['Normal']))
+        # Add text as paragraph with Chinese font
+        text_style = ParagraphStyle(
+            'NormalText',
+            parent=styles['Normal'],
+            fontName=chinese_font,
+            fontSize=10,
+            leading=14
+        )
+        story.append(Paragraph(section_text, text_style))
         story.append(Spacer(1, 20))
     
     doc.build(story)
