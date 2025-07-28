@@ -198,7 +198,7 @@ if send_to_kindle_option:
 else:
     kindle_email = None
 
-if st.button("Generate and Send"):
+if st.button("Generate"):
     try:
         st.info("Starting process...")
 
@@ -271,7 +271,7 @@ if st.button("Generate and Send"):
         
         # Email sending option
         if user_email:
-            if st.button("📧 Send to Email"):
+            if st.button("📧 Send to my email directly"):
                 st.write(f"Attempting to send file to email: {user_email}")
                 
                 if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
@@ -283,7 +283,7 @@ if st.button("Generate and Send"):
         
         # Kindle sending option (only for EPUB)
         if format_choice == "EPUB" and send_to_kindle_option and kindle_email:
-            if st.button("📚 Send to Kindle"):
+            if st.button("📚 Send to my Kindle directly"):
                 if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
                     st.success(f"✅ File sent to Kindle: {kindle_email}")
                 else:
