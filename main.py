@@ -386,26 +386,28 @@ def generate_pdf(title, sections, output_filename):
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
             
-            # Check if we have enough content (at least 3 lines) and current text ends with sentence
+                        # Check if we have enough content (at least 3 lines) and current text ends with sentence
             if len(paragraph) >= 3 and entry.text.strip().endswith(('.', '!', '?')):
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
                 
-                # Add paragraph with better formatting
-                text_style = ParagraphStyle(
-                    'NormalText',
-                    parent=styles['Normal'],
-                    fontName=chinese_font,
-                    fontSize=13,
-                    leading=18,
-                    spaceAfter=12,
-                    firstLineIndent=0,  # No indentation
-                    leftIndent=0,
-                    rightIndent=0
-                )
-                story.append(Paragraph(paragraph_text, text_style))
-                story.append(Spacer(1, 8))  # Space between paragraphs
-                paragraph = []
+                # Double check that the entire paragraph ends with a complete sentence
+                if paragraph_text.strip().endswith(('.', '!', '?')):
+                    # Add paragraph with better formatting
+                    text_style = ParagraphStyle(
+                        'NormalText',
+                        parent=styles['Normal'],
+                        fontName=chinese_font,
+                        fontSize=13,
+                        leading=18,
+                        spaceAfter=12,
+                        firstLineIndent=0,  # No indentation
+                        leftIndent=0,
+                        rightIndent=0
+                    )
+                    story.append(Paragraph(paragraph_text, text_style))
+                    story.append(Spacer(1, 8))  # Space between paragraphs
+                    paragraph = []
             elif len(paragraph) >= 8 or i == len(entries) - 1:
                 # Force end paragraph if too long or at the end
                 paragraph_text = " ".join(paragraph)
