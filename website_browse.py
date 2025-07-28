@@ -1,9 +1,34 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
+import subprocess
+import sys
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Install Playwright browsers if not already installed
+@st.cache_resource
+def install_playwright_browsers():
+    try:
+        # First check if playwright is available
+        result = subprocess.run(['playwright', '--version'], 
+                              capture_output=True, text=True)
+        if result.returncode != 0:
+            return False
+            
+        # Install chromium browser
+        result = subprocess.run(['playwright', 'install', 'chromium'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
+
+# Install browsers on app startup
+playwright_available = install_playwright_browsers()
 from main import (
     extract_video_id,
     sanitize_filename,
