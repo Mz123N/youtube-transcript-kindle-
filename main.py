@@ -11,6 +11,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 
 # Try to import playwright for better transcript fetching
 try:
@@ -293,22 +294,27 @@ def generate_pdf(title, sections, output_filename):
     styles = getSampleStyleSheet()
     story = []
     
-    # Try to register Chinese fonts
+    # Use UnicodeCIDFont which supports Chinese characters
     try:
-        # Try to use system fonts that support Chinese
-        pdfmetrics.registerFont(TTFont('ArialUnicode', '/System/Library/Fonts/Arial Unicode MS.ttf'))
-        chinese_font = 'ArialUnicode'
+        # Register Unicode font that supports Chinese
+        pdfmetrics.registerFont(UnicodeCIDFont('STSong-Light'))
+        chinese_font = 'STSong-Light'
     except:
         try:
-            # Fallback to other common Chinese fonts
-            pdfmetrics.registerFont(TTFont('PingFang', '/System/Library/Fonts/PingFang.ttc'))
-            chinese_font = 'PingFang'
+            # Try alternative Chinese fonts
+            pdfmetrics.registerFont(UnicodeCIDFont('HeiseiMin-W3'))
+            chinese_font = 'HeiseiMin-W3'
         except:
             try:
-                # Try Helvetica as last resort
-                chinese_font = 'Helvetica'
+                # Try system fonts as fallback
+                pdfmetrics.registerFont(TTFont('ArialUnicode', '/System/Library/Fonts/Arial Unicode MS.ttf'))
+                chinese_font = 'ArialUnicode'
             except:
-                chinese_font = 'Helvetica'
+                try:
+                    pdfmetrics.registerFont(TTFont('PingFang', '/System/Library/Fonts/PingFang.ttc'))
+                    chinese_font = 'PingFang'
+                except:
+                    chinese_font = 'Helvetica'
     
     # Title
     title_style = ParagraphStyle(
@@ -363,7 +369,7 @@ def generate_pdf(title, sections, output_filename):
         story.append(Spacer(1, 20))
     
     doc.build(story)
-    print(f"Saved PDF as {output_filename}")
+    print(f"Saved PDF as {output_filename} using font: {chinese_font}")
 
 def send_file_via_email(file_path, user_email, book_title, sender_email, sender_app_password):
     """Send the generated file to user's email."""
