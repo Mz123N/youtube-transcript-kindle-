@@ -168,7 +168,6 @@ st.markdown(f'''
 ''', unsafe_allow_html=True)
 
 # Input section with styling
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
 st.markdown("### 📝 Content Details")
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
@@ -181,10 +180,8 @@ interval_choice = st.selectbox(
     ["5 min", "10 min", "20 min", "30 min"],
     index=2  # Default to 20 min
 )
-st.markdown('</div>', unsafe_allow_html=True)
 
 # Delivery section
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
 st.markdown("### 📧 Delivery Options")
 user_email = st.text_input("Your Email (to receive the file)")
 
@@ -200,12 +197,10 @@ if send_to_kindle_option:
     kindle_email = st.text_input("Kindle Email")
 else:
     kindle_email = None
-st.markdown('</div>', unsafe_allow_html=True)
 
 if st.button("Generate and Send"):
     try:
         st.info("Starting process...")
-        st.write("Current working directory:", os.getcwd())
 
         # 1. Get and process inputs from the form
         video_id = extract_video_id(youtube_url)
