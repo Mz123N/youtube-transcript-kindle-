@@ -254,13 +254,22 @@ def transcript_sections_to_epub_chapters(sections):
     for idx, (start, end, entries) in enumerate(sections, 1):
         section_title = f"Section {idx}: {format_timestamp(start)}–{format_timestamp(end)}"
         html = f"<h2>{section_title}</h2>\n"
-        # Group transcript into paragraphs of ~20 lines for longer paragraphs
+        # Group transcript into paragraphs ending at sentence boundaries
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            if len(paragraph) >= 20 or i == len(entries) - 1:
-                html += f"<p class='block'>{' '.join(paragraph)}</p>\n"
+            
+            # Check if current text ends with a sentence ending
+            current_text = entry.text.strip()
+            if current_text.endswith(('.', '!', '?')):
+                # Create paragraph text
+                paragraph_text = " ".join(paragraph)
+                html += f"<p class='block'>{paragraph_text}</p>\n"
                 paragraph = []
+            elif i == len(entries) - 1:
+                # End of entries, add remaining content
+                paragraph_text = " ".join(paragraph)
+                html += f"<p class='block'>{paragraph_text}</p>\n"
         chapter = epub.EpubHtml(title=section_title, file_name=f'section_{idx:02d}.xhtml', lang='en')
         chapter.content = html
         chapters.append((section_title, chapter))
