@@ -17,6 +17,8 @@ try:
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
 
+
+
 # Try to import pytube for fetching video title
 try:
     from pytube import YouTube
@@ -41,6 +43,8 @@ def fetch_video_title(url):
 def sanitize_filename(name):
     # Remove or replace characters not allowed in filenames
     return re.sub(r'[\\/*?\:"<>|]', '', name)
+
+
 
 def fetch_transcript_with_playwright(video_id):
     """Fetch transcript using Playwright to bypass IP blocks."""
@@ -156,7 +160,7 @@ def fetch_transcript_with_playwright(video_id):
         raise Exception(f"Playwright error: {e}")
 
 def fetch_transcript(video_id):
-    """Try API first, then fallback to Playwright if needed."""
+    """Try API first, then fallback to Playwright if needed. Preserves original language."""
     try:
         # Try the regular API first with multiple language attempts
         try:
@@ -178,7 +182,8 @@ def fetch_transcript(video_id):
         # If API fails, try Playwright as fallback
         if PLAYWRIGHT_AVAILABLE:
             try:
-                return fetch_transcript_with_playwright(video_id)
+                transcript = fetch_transcript_with_playwright(video_id)
+                return transcript
             except Exception as playwright_error:
                 # If both fail, raise the original API error
                 raise Exception(f"API failed: {api_error}. Playwright failed: {playwright_error}")
