@@ -372,11 +372,14 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs of ~20 lines for longer paragraphs
+        # Group transcript into paragraphs ending at sentence boundaries
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            if len(paragraph) >= 20 or i == len(entries) - 1:
+            
+            # Check if current text ends with a sentence ending
+            current_text = entry.text.strip()
+            if current_text.endswith(('.', '!', '?')):
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
                 
