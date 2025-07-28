@@ -396,7 +396,7 @@ def generate_pdf(title, sections, output_filename):
                     j = i + 1
                     while j < len(entries) and len(look_ahead) < 3:
                         look_ahead.append(entries[j].text.replace('\n', ' '))
-                        if any(look_ahead[-1].strip().endswith(('.', '!', '?'))):
+                        if look_ahead[-1].strip().endswith(('.', '!', '?')):
                             # Found complete sentence, extend paragraph
                             paragraph_text += " " + " ".join(look_ahead)
                             i = j  # Update index to skip processed entries
