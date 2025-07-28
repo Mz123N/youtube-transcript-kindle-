@@ -320,25 +320,26 @@ def generate_pdf(title, sections, output_filename):
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=16,
-        spaceAfter=30,
+        fontSize=18,
+        spaceAfter=25,
+        spaceBefore=20,
         alignment=1,  # Center alignment
         fontName=chinese_font
     )
     story.append(Paragraph(title, title_style))
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 15))
     
     # Add subtitle
     subtitle_style = ParagraphStyle(
         'CustomSubtitle',
         parent=styles['Heading2'],
-        fontSize=12,
-        spaceAfter=20,
+        fontSize=13,
+        spaceAfter=30,
         alignment=1,
         fontName=chinese_font
     )
     story.append(Paragraph("YouTube Transcript", subtitle_style))
-    story.append(Spacer(1, 30))
+    story.append(Spacer(1, 35))
     
     # Content
     for idx, (start, end, entries) in enumerate(sections, 1):
@@ -347,26 +348,38 @@ def generate_pdf(title, sections, output_filename):
         header_style = ParagraphStyle(
             'SectionHeader',
             parent=styles['Heading2'],
-            fontName=chinese_font
+            fontName=chinese_font,
+            fontSize=14,
+            spaceAfter=20,
+            spaceBefore=30
         )
         story.append(Paragraph(section_title, header_style))
-        story.append(Spacer(1, 12))
         
-        # Combine all text in the section
-        section_text = ""
-        for entry in entries:
-            section_text += entry.text.replace('\n', ' ') + " "
+        # Group transcript into paragraphs of ~5 lines for readability (same as EPUB)
+        paragraph = []
+        for i, entry in enumerate(entries):
+            paragraph.append(entry.text.replace('\n', ' '))
+            if len(paragraph) >= 5 or i == len(entries) - 1:
+                # Create paragraph text
+                paragraph_text = " ".join(paragraph)
+                
+                # Add paragraph with better formatting
+                text_style = ParagraphStyle(
+                    'NormalText',
+                    parent=styles['Normal'],
+                    fontName=chinese_font,
+                    fontSize=11,
+                    leading=16,
+                    spaceAfter=12,
+                    firstLineIndent=20,  # Indent first line
+                    leftIndent=0,
+                    rightIndent=0
+                )
+                story.append(Paragraph(paragraph_text, text_style))
+                story.append(Spacer(1, 8))  # Space between paragraphs
+                paragraph = []
         
-        # Add text as paragraph with Chinese font
-        text_style = ParagraphStyle(
-            'NormalText',
-            parent=styles['Normal'],
-            fontName=chinese_font,
-            fontSize=10,
-            leading=14
-        )
-        story.append(Paragraph(section_text, text_style))
-        story.append(Spacer(1, 20))
+        story.append(Spacer(1, 25))  # Extra space after each section
     
     doc.build(story)
     print(f"Saved PDF as {output_filename} using font: {chinese_font}")
