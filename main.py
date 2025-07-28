@@ -204,21 +204,38 @@ def format_timestamp(seconds):
     secs = int(seconds % 60)
     return f"{mins:02d}:{secs:02d}"
 
-def group_transcript_by_interval(transcript, interval_seconds=1200):
-    """Group transcript entries into sections of interval_seconds (default 20 min)."""
+def group_transcript_by_interval(transcript, interval_seconds=2400):
+    """Group transcript entries into sections of interval_seconds (default 40 min - double the size)."""
     sections = []
     current_section = []
     current_start = 0
     for entry in transcript:
         if entry.start >= current_start + interval_seconds and current_section:
+            # Try to end at a complete sentence
+            current_section = end_section_at_sentence(current_section)
             sections.append((current_start, current_start + interval_seconds, current_section))
             current_start += interval_seconds
             current_section = []
         current_section.append(entry)
     if current_section:
         # Add the last section
+        current_section = end_section_at_sentence(current_section)
         sections.append((current_start, current_start + interval_seconds, current_section))
     return sections
+
+def end_section_at_sentence(entries):
+    """Try to end the section at a complete sentence."""
+    if not entries:
+        return entries
+    
+    # Look for sentence endings in the last few entries
+    for i in range(len(entries) - 1, max(0, len(entries) - 5), -1):
+        text = entries[i].text.strip()
+        if text.endswith('.') or text.endswith('!') or text.endswith('?'):
+            return entries[:i+1]
+    
+    # If no sentence ending found, return all entries
+    return entries
 
 def create_title_page(title, video_id):
     html = f"""
@@ -349,7 +366,7 @@ def generate_pdf(title, sections, output_filename):
             'SectionHeader',
             parent=styles['Heading2'],
             fontName=chinese_font,
-            fontSize=14,
+            fontSize=16,
             spaceAfter=20,
             spaceBefore=30
         )
@@ -368,8 +385,8 @@ def generate_pdf(title, sections, output_filename):
                     'NormalText',
                     parent=styles['Normal'],
                     fontName=chinese_font,
-                    fontSize=11,
-                    leading=16,
+                    fontSize=13,
+                    leading=18,
                     spaceAfter=12,
                     firstLineIndent=20,  # Indent first line
                     leftIndent=0,
