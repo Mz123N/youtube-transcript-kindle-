@@ -88,6 +88,44 @@ st.markdown("""
 
 
 
+# Demo video section
+st.markdown("""
+<style>
+    .demo-video-container {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+    }
+    .demo-video-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+    .demo-video {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Demo video
+st.markdown("""
+<div class="demo-video-container">
+    <div class="demo-video-title">🎬 See How It Works</div>
+    <p style="color: #6c757d; font-size: 0.9rem; margin-bottom: 1rem;">
+        Watch Naval Ravikant & Chris Williamson's wisdom transform into a readable e-book
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# Embed YouTube video
+st.video("https://www.youtube.com/watch?v=KyfUysrNaco")
+
 # Main header with icon
 st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
 
@@ -193,6 +231,8 @@ st.markdown(f'''
     </div>
 </div>
 ''', unsafe_allow_html=True)
+
+
 
 # Input section with styling
 st.markdown("### 📝 Content Details")
