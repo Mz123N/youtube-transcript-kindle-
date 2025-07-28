@@ -71,6 +71,74 @@ with col1:
 with col2:
     st.markdown('<div class="feature-box"><h4>📱 Read Anywhere</h4><p>Access your content on Kindle, phone, or computer</p></div>', unsafe_allow_html=True)
 
+# Inspirational quotes section
+st.markdown("""
+<style>
+    .quote-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .quote-text {
+        font-size: 1.3rem;
+        font-style: italic;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    .quote-author {
+        font-size: 1rem;
+        font-weight: bold;
+        opacity: 0.9;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Rotating quotes from popular podcasters
+import random
+quotes = [
+    {
+        "text": "The most important skill for getting rich is becoming a perpetual learner.",
+        "author": "Naval Ravikant"
+    },
+    {
+        "text": "Read what you love until you love to read.",
+        "author": "Naval Ravikant"
+    },
+    {
+        "text": "The best investment you can make is in yourself.",
+        "author": "Warren Buffett"
+    },
+    {
+        "text": "Knowledge is the new money. Information is the new wealth.",
+        "author": "Balaji Srinivasan"
+    },
+    {
+        "text": "The internet is the greatest library ever created.",
+        "author": "Balaji Srinivasan"
+    },
+    {
+        "text": "Success is not about being the best. It's about being better than you were yesterday.",
+        "author": "Alex Hormozi"
+    },
+    {
+        "text": "The more you learn, the more you earn.",
+        "author": "Alex Hormozi"
+    }
+]
+
+# Display a random quote
+quote = random.choice(quotes)
+st.markdown(f'''
+<div class="quote-container">
+    <div class="quote-text">"{quote['text']}"</div>
+    <div class="quote-author">— {quote['author']}</div>
+</div>
+''', unsafe_allow_html=True)
+
 # Input section with styling
 st.markdown('<div class="input-section">', unsafe_allow_html=True)
 st.markdown("### 📝 Content Details")
