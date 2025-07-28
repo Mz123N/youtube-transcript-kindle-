@@ -121,37 +121,37 @@ quotes = [
     {
         "text": "The most important skill for getting rich is becoming a perpetual learner.",
         "author": "Naval Ravikant",
-        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1256841238298292232/ycqwaMI2_400x400.jpg"
     },
     {
         "text": "Read what you love until you love to read.",
         "author": "Naval Ravikant",
-        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1256841238298292232/ycqwaMI2_400x400.jpg"
     },
     {
         "text": "The best investment you can make is in yourself.",
         "author": "Warren Buffett",
-        "image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face"
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Warren_Buffett_at_TCU_3_%2835168169014%29_%28cropped%29.jpg/800px-Warren_Buffett_at_TCU_3_%2835168169014%29_%28cropped%29.jpg"
     },
     {
         "text": "Knowledge is the new money. Information is the new wealth.",
         "author": "Balaji Srinivasan",
-        "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1588640551871139840/7VzqKqXj_400x400.jpg"
     },
     {
         "text": "The internet is the greatest library ever created.",
         "author": "Balaji Srinivasan",
-        "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1588640551871139840/7VzqKqXj_400x400.jpg"
     },
     {
         "text": "Success is not about being the best. It's about being better than you were yesterday.",
         "author": "Alex Hormozi",
-        "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1642784892478320640/8aPjHh6k_400x400.jpg"
     },
     {
         "text": "The more you learn, the more you earn.",
         "author": "Alex Hormozi",
-        "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+        "image": "https://pbs.twimg.com/profile_images/1642784892478320640/8aPjHh6k_400x400.jpg"
     }
 ]
 
