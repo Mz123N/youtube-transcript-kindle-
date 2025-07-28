@@ -372,11 +372,11 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs of ~10 lines for fewer paragraphs
+        # Group transcript into paragraphs of ~5 lines for shorter paragraphs
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            if len(paragraph) >= 10 or i == len(entries) - 1:
+            if len(paragraph) >= 5 or i == len(entries) - 1:
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
                 
