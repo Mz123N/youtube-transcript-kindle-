@@ -381,13 +381,27 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs of ~10 lines for longer paragraphs
+        # Group transcript into paragraphs of ~5 lines for fewer paragraphs
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            if len(paragraph) >= 10 or i == len(entries) - 1:
+            if len(paragraph) >= 5 or i == len(entries) - 1:
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
+                
+                # Check if paragraph ends with complete sentence
+                if not paragraph_text.strip().endswith(('.', '!', '?')):
+                    # Look ahead to find a complete sentence ending
+                    look_ahead = []
+                    j = i + 1
+                    while j < len(entries) and len(look_ahead) < 3:
+                        look_ahead.append(entries[j].text.replace('\n', ' '))
+                        if any(look_ahead[-1].strip().endswith(('.', '!', '?'))):
+                            # Found complete sentence, extend paragraph
+                            paragraph_text += " " + " ".join(look_ahead)
+                            i = j  # Update index to skip processed entries
+                            break
+                        j += 1
                 
                 # Add paragraph with better formatting
                 text_style = ParagraphStyle(
