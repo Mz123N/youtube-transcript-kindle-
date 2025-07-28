@@ -3,4 +3,5 @@ youtube-transcript-api
 ebooklib
 pytube
 reportlab
-python-dotenv 
+python-dotenv
+playwright 

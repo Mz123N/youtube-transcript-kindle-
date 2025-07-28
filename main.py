@@ -10,6 +10,13 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 
+# Try to import playwright for better transcript fetching
+try:
+    from playwright.sync_api import sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+
 # Try to import pytube for fetching video title
 try:
     from pytube import YouTube
@@ -35,16 +42,95 @@ def sanitize_filename(name):
     # Remove or replace characters not allowed in filenames
     return re.sub(r'[\\/*?\:"<>|]', '', name)
 
-def fetch_transcript(video_id):
+def fetch_transcript_with_playwright(video_id):
+    """Fetch transcript using Playwright to bypass IP blocks."""
+    if not PLAYWRIGHT_AVAILABLE:
+        raise Exception("Playwright not available. Please install it with: pip install playwright")
+    
     try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            
+            # Navigate to YouTube video
+            url = f"https://www.youtube.com/watch?v={video_id}"
+            page.goto(url)
+            
+            # Wait for page to load
+            page.wait_for_load_state("networkidle")
+            
+            # Try to find and click the "Show transcript" button
+            try:
+                # Look for transcript button
+                transcript_button = page.locator('button[aria-label*="transcript"], button[aria-label*="Transcript"]')
+                if transcript_button.count() > 0:
+                    transcript_button.first.click()
+                    page.wait_for_timeout(2000)  # Wait for transcript to load
+                
+                # Extract transcript text
+                transcript_elements = page.locator('[data-testid="transcript-segment"]')
+                if transcript_elements.count() == 0:
+                    # Try alternative selectors
+                    transcript_elements = page.locator('.ytd-transcript-segment-renderer')
+                
+                if transcript_elements.count() == 0:
+                    raise Exception("No transcript found on page")
+                
+                transcript = []
+                for i in range(transcript_elements.count()):
+                    element = transcript_elements.nth(i)
+                    text = element.text_content()
+                    if text:
+                        # Parse timestamp and text
+                        parts = text.split('\n')
+                        if len(parts) >= 2:
+                            timestamp = parts[0]
+                            content = ' '.join(parts[1:])
+                            # Convert timestamp to seconds
+                            time_parts = timestamp.split(':')
+                            if len(time_parts) == 2:
+                                seconds = int(time_parts[0]) * 60 + int(time_parts[1])
+                            elif len(time_parts) == 3:
+                                seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
+                            else:
+                                seconds = 0
+                            
+                            transcript.append({
+                                'start': seconds,
+                                'text': content
+                            })
+                
+                browser.close()
+                return transcript
+            except Exception as e:
+                browser.close()
+                raise Exception(f"Failed to extract transcript: {e}")
+                
+    except Exception as e:
+        raise Exception(f"Playwright error: {e}")
+
+def fetch_transcript(video_id):
+    """Try API first, then fallback to Playwright if needed."""
+    try:
+        # Try the regular API first
         transcript = YouTubeTranscriptApi().fetch(video_id)
         return transcript
-    except TranscriptsDisabled:
-        raise Exception("Transcripts are disabled for this video.")
-    except NoTranscriptFound:
-        raise Exception("No transcript found for this video.")
-    except Exception as e:
-        raise Exception(f"Error fetching transcript: {e}")
+    except Exception as api_error:
+        # If API fails, try Playwright as fallback
+        if PLAYWRIGHT_AVAILABLE:
+            try:
+                return fetch_transcript_with_playwright(video_id)
+            except Exception as playwright_error:
+                # If both fail, raise the original API error
+                raise Exception(f"API failed: {api_error}. Playwright failed: {playwright_error}")
+        else:
+            # If Playwright not available, just raise the API error
+            if "Transcripts are disabled" in str(api_error):
+                raise Exception("Transcripts are disabled for this video.")
+            elif "No transcript found" in str(api_error):
+                raise Exception("No transcript found for this video.")
+            else:
+                raise Exception(f"Error fetching transcript: {api_error}")
 
 def format_timestamp(seconds):
     mins = int(seconds // 60)
