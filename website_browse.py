@@ -31,6 +31,7 @@ sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_h
 send_to_kindle_option = st.checkbox("Send to Kindle directly")
 
 if send_to_kindle_option:
+    st.info("📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at [Amazon's Send to Kindle page](https://www.amazon.com/sendtokindle/email).")
     kindle_email = st.text_input("Kindle Email")
 else:
     kindle_email = None
