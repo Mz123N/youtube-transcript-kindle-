@@ -61,6 +61,68 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Demo GIF section
+st.markdown("""
+<style>
+    .demo-container {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+    }
+    .demo-gif {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .demo-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+
+# Demo video section
+st.markdown("""
+<style>
+    .demo-video-container {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+    }
+    .demo-video-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+    .demo-video {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Demo video
+st.markdown("""
+<div class="demo-video-container">
+    <div class="demo-video-title">🎬 See How It Works</div>
+</div>
+""", unsafe_allow_html=True)
+
+# Embed demo video
+st.video("https://www.youtube.com/watch?v=afzBAW9Q64k")
+
 # Main header with icon
 st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
 
@@ -167,37 +229,36 @@ st.markdown(f'''
 </div>
 ''', unsafe_allow_html=True)
 
+
+
 # Input section with styling
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
 st.markdown("### 📝 Content Details")
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
 format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
-st.markdown('</div>', unsafe_allow_html=True)
 
-# Delivery section
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
-st.markdown("### 📧 Delivery Options")
-user_email = st.text_input("Your Email (to receive the file)")
+# Interval selection
+st.markdown("### ⏱️ Section Length")
+interval_choice = st.selectbox(
+    "How long of the interval you want to classify this conversation?",
+    ["5 min", "10 min", "20 min", "30 min"],
+    index=2  # Default to 20 min
+)
 
 # Set default sender credentials (your email)
 sender_email = "mengnan188@gmail.com"  # Your Gmail address
 sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_here')  # Get from environment variable
 
-# Kindle delivery option
-send_to_kindle_option = st.checkbox("Send to Kindle directly")
-
-if send_to_kindle_option:
-    st.markdown('<div class="info-box">📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at <a href="https://www.amazon.com/sendtokindle/email" target="_blank">Amazon\'s Send to Kindle page</a>.</div>', unsafe_allow_html=True)
-    kindle_email = st.text_input("Kindle Email")
-else:
-    kindle_email = None
-st.markdown('</div>', unsafe_allow_html=True)
-
-if st.button("Generate and Send"):
+if st.button("Generate"):
+    # Store generation state
+    st.session_state.generated = True
+    st.session_state.youtube_url = youtube_url
+    st.session_state.book_title = book_title
+    st.session_state.format_choice = format_choice
+    st.session_state.interval_choice = interval_choice
+    
     try:
         st.info("Starting process...")
-        st.write("Current working directory:", os.getcwd())
 
         # 1. Get and process inputs from the form
         video_id = extract_video_id(youtube_url)
@@ -210,8 +271,18 @@ if st.button("Generate and Send"):
         st.write(f"Transcript fetched: {len(transcript)} entries")
         
         st.write("Step 2: Grouping into sections...")
-        sections = group_transcript_by_interval(transcript, interval_seconds=1200)  # 20 min sections
-        st.write(f"Sections created: {len(sections)}")
+        
+        # Convert interval choice to seconds
+        interval_mapping = {
+            "5 min": 300,
+            "10 min": 600,
+            "20 min": 1200,
+            "30 min": 1800
+        }
+        interval_seconds = interval_mapping[interval_choice]
+        
+        sections = group_transcript_by_interval(transcript, interval_seconds=interval_seconds)
+        st.write(f"Sections created: {len(sections)} with {interval_choice} intervals")
         
         # 3. Generate file based on format choice
         st.write(f"Step 3: Generating {format_choice} file...")
@@ -226,35 +297,81 @@ if st.button("Generate and Send"):
             generate_pdf(video_title, sections, output_filename)
         
         st.write(f"File generated successfully: {output_filename}")
-
-        # 4. Handle delivery based on user choice
-        success_messages = []
         
-        # Always send to user's email
-        if user_email:
-            st.write(f"Attempting to send file to email: {user_email}")
-            
-            if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
-                success_messages.append(f"File sent to your email: {user_email}")
-                st.write("Email sent successfully!")
-            else:
-                st.error("Failed to send file to your email. Please check your email address and try again.")
-        else:
-            st.write("No user email provided, skipping email delivery")
-        
-        # Send to Kindle if option is selected
-        if send_to_kindle_option and kindle_email:
-            if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
-                success_messages.append(f"File sent to Kindle: {kindle_email}")
-            else:
-                st.error("Failed to send to Kindle. Please check your Kindle email credentials.")
-        
-        # Show success message
-        if success_messages:
-            st.markdown('<div class="success-box">🎉 <strong>Success!</strong> ' + " | ".join(success_messages) + '</div>', unsafe_allow_html=True)
-        else:
-            st.warning("File generated but no delivery method selected.")
+        # Store file info in session state
+        st.session_state.output_filename = output_filename
+        st.session_state.video_title = video_title
 
     except Exception as e:
         st.error("An error occurred while generating or saving the book.")
         st.exception(e)
+
+# Show download and send options if file was generated
+if st.session_state.get('generated', False):
+    output_filename = st.session_state.get('output_filename')
+    video_title = st.session_state.get('video_title')
+    
+    if output_filename and video_title:
+        # 4. Step 1: Direct Download
+        st.markdown("### 📥 Download Your File")
+        
+        # Read the generated file for download
+        try:
+            with open(output_filename, 'rb') as f:
+                file_data = f.read()
+            
+            # Create download button based on format
+            format_choice = st.session_state.get('format_choice')
+            if format_choice == "EPUB":
+                st.download_button(
+                    label="📥 Download EPUB",
+                    data=file_data,
+                    file_name=output_filename,
+                    mime="application/epub+zip"
+                )
+            else:  # PDF
+                st.download_button(
+                    label="📥 Download PDF",
+                    data=file_data,
+                    file_name=output_filename,
+                    mime="application/pdf"
+                )
+        except Exception as e:
+            st.error(f"Error preparing download: {e}")
+
+        # 5. Step 2: Dynamic Delivery Options
+        st.markdown("### 📧 Or send directly to your email or Kindle!")
+        
+        # Email input
+        user_email = st.text_input("Your Email (to receive the file)")
+        
+        # Kindle delivery option
+        send_to_kindle_option = st.checkbox("Send to Kindle directly")
+        
+        if send_to_kindle_option:
+            st.markdown('<div class="info-box">📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at <a href="https://www.amazon.com/sendtokindle/email" target="_blank">Amazon\'s Send to Kindle page</a>.</div>', unsafe_allow_html=True)
+            kindle_email = st.text_input("Kindle Email")
+        else:
+            kindle_email = None
+        
+        # Send options
+        if user_email:
+            if st.button("📧 Send to my email directly"):
+                st.write(f"Attempting to send file to email: {user_email}")
+                
+                if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
+                    st.success(f"✅ File sent to your email: {user_email}")
+                else:
+                    st.error("❌ Failed to send file to your email. Please check your email address and try again.")
+        
+        # Kindle sending option (only for EPUB)
+        if format_choice == "EPUB" and send_to_kindle_option and kindle_email:
+            if st.button("📚 Send to my Kindle directly"):
+                if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
+                    st.success(f"✅ File sent to Kindle: {kindle_email}")
+                else:
+                    st.error("❌ Failed to send to Kindle. Please check your Kindle email credentials.")
+        elif format_choice == "PDF" and send_to_kindle_option:
+            st.info("💡 Kindle sending is only available for EPUB files")
+        elif send_to_kindle_option and not kindle_email:
+            st.info("💡 Enter your Kindle email above to enable Kindle sending")
