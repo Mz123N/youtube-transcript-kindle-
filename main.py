@@ -471,10 +471,18 @@ def send_to_kindle(epub_path, book_title, kindle_email=None, sender_email=None, 
         return False
     
     msg = EmailMessage()
-    msg['Subject'] = book_title
+    msg['Subject'] = f"Your YouTube Transcript: {book_title}"
     msg['From'] = sender_email
     msg['To'] = kindle_email
-    msg.set_content('Convert')  # 'Convert' in the body will convert to Kindle format if possible
+    msg.set_content(f'''
+    Hi there!
+    
+    Here's your YouTube transcript as requested: "{book_title}"
+    
+    The file is attached to this email.
+    
+    Enjoy reading!
+    ''')
     
     with open(epub_path, 'rb') as f:
         file_data = f.read()
