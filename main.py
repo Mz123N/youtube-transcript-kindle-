@@ -381,44 +381,24 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-                # Group transcript into paragraphs that end with complete sentences
+                # Group transcript into paragraphs of ~5 lines, but end at nearest sentence
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
             
-            # Create current paragraph text
-            paragraph_text = " ".join(paragraph)
-            
-            # Check if paragraph is long enough (at least 3 lines) and ends with complete sentence
-            if len(paragraph) >= 3 and paragraph_text.strip().endswith(('.', '!', '?')):
-                # Add paragraph with better formatting
-                text_style = ParagraphStyle(
-                    'NormalText',
-                    parent=styles['Normal'],
-                    fontName=chinese_font,
-                    fontSize=13,
-                    leading=18,
-                    spaceAfter=12,
-                    firstLineIndent=0,  # No indentation
-                    leftIndent=0,
-                    rightIndent=0
-                )
-                story.append(Paragraph(paragraph_text, text_style))
-                story.append(Spacer(1, 8))  # Space between paragraphs
-                paragraph = []
-            elif len(paragraph) >= 8 or i == len(entries) - 1:
-                # Force end paragraph if too long or at the end
-                # Try to find a better ending point by looking for sentence endings
-                if i < len(entries) - 1:
-                    # Look ahead up to 3 more entries to find a sentence ending
-                    look_ahead = []
-                    for j in range(i + 1, min(i + 4, len(entries))):
-                        look_ahead.append(entries[j].text.replace('\n', ' '))
-                        if look_ahead[-1].strip().endswith(('.', '!', '?')):
-                            # Found a sentence ending, extend paragraph
-                            paragraph_text += " " + " ".join(look_ahead)
-                            i = j  # Skip processed entries
-                            break
+            # Check if we should end paragraph (5 lines or at the end)
+            if len(paragraph) >= 5 or i == len(entries) - 1:
+                # Create paragraph text
+                paragraph_text = " ".join(paragraph)
+                
+                # Look for the nearest sentence ending in the paragraph
+                # Start from the end and work backwards
+                words = paragraph_text.split()
+                for j in range(len(words) - 1, -1, -1):
+                    if words[j].endswith(('.', '!', '?')):
+                        # Found a sentence ending, cut paragraph here
+                        paragraph_text = " ".join(words[:j+1])
+                        break
                 
                 # Add paragraph with better formatting
                 text_style = ParagraphStyle(
