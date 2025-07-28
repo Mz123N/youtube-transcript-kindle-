@@ -65,13 +65,11 @@ st.markdown("""
 st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
 
 # Feature highlights
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
     st.markdown('<div class="feature-box"><h4>⚡ Instant Conversion</h4><p>Transform YouTube videos into readable e-books in seconds</p></div>', unsafe_allow_html=True)
 with col2:
     st.markdown('<div class="feature-box"><h4>📱 Read Anywhere</h4><p>Access your content on Kindle, phone, or computer</p></div>', unsafe_allow_html=True)
-with col3:
-    st.markdown('<div class="feature-box"><h4>🎯 Smart Formatting</h4><p>Clean, organized content with proper sections</p></div>', unsafe_allow_html=True)
 
 # Input section with styling
 st.markdown('<div class="input-section">', unsafe_allow_html=True)
