@@ -132,38 +132,14 @@ quotes = [
     }
 ]
 
-# Auto-scrolling quotes every 4 seconds
-if 'quote_index' not in st.session_state:
-    st.session_state.quote_index = 0
-if 'quote_start_time' not in st.session_state:
-    st.session_state.quote_start_time = time.time()
-
-# Create a placeholder for the quote
-quote_placeholder = st.empty()
-
-# Auto-rotate quotes every 4 seconds
-current_time = time.time()
-if current_time - st.session_state.quote_start_time > 4:
-    st.session_state.quote_index = (st.session_state.quote_index + 1) % len(quotes)
-    st.session_state.quote_start_time = current_time
-
-# Display the current quote
-quote = quotes[st.session_state.quote_index]
-quote_placeholder.markdown(f'''
+# Display a random quote each time
+quote = random.choice(quotes)
+st.markdown(f'''
 <div class="quote-container">
     <div class="quote-text">"{quote['text']}"</div>
     <div class="quote-author">— {quote['author']}</div>
 </div>
 ''', unsafe_allow_html=True)
-
-# Use st.rerun() to refresh quotes every 4 seconds
-if 'last_rerun_time' not in st.session_state:
-    st.session_state.last_rerun_time = time.time()
-
-# Check if 4 seconds have passed since last rerun
-if time.time() - st.session_state.last_rerun_time > 4:
-    st.session_state.last_rerun_time = time.time()
-    st.rerun()
 
 # Input section with styling
 st.markdown('<div class="input-section">', unsafe_allow_html=True)
