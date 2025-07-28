@@ -123,8 +123,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Embed YouTube video
-st.video("https://www.youtube.com/watch?v=KyfUysrNaco")
+# Embed demo video
+st.video("https://www.youtube.com/watch?v=afzBAW9Q64k")
 
 # Main header with icon
 st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
