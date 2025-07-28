@@ -381,36 +381,60 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs that end with complete sentences
+                # Group transcript into paragraphs that end with complete sentences
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
             
-                        # Check if we have enough content (at least 3 lines) and current text ends with sentence
-            if len(paragraph) >= 3 and entry.text.strip().endswith(('.', '!', '?')):
-                # Create paragraph text
-                paragraph_text = " ".join(paragraph)
-                
-                # Double check that the entire paragraph ends with a complete sentence
-                if paragraph_text.strip().endswith(('.', '!', '?')):
-                    # Add paragraph with better formatting
-                    text_style = ParagraphStyle(
-                        'NormalText',
-                        parent=styles['Normal'],
-                        fontName=chinese_font,
-                        fontSize=13,
-                        leading=18,
-                        spaceAfter=12,
-                        firstLineIndent=0,  # No indentation
-                        leftIndent=0,
-                        rightIndent=0
-                    )
-                    story.append(Paragraph(paragraph_text, text_style))
-                    story.append(Spacer(1, 8))  # Space between paragraphs
-                    paragraph = []
+            # Create current paragraph text
+            paragraph_text = " ".join(paragraph)
+            
+            # Check if paragraph is long enough (at least 3 lines) and ends with complete sentence
+            if len(paragraph) >= 3 and paragraph_text.strip().endswith(('.', '!', '?')):
+                # Add paragraph with better formatting
+                text_style = ParagraphStyle(
+                    'NormalText',
+                    parent=styles['Normal'],
+                    fontName=chinese_font,
+                    fontSize=13,
+                    leading=18,
+                    spaceAfter=12,
+                    firstLineIndent=0,  # No indentation
+                    leftIndent=0,
+                    rightIndent=0
+                )
+                story.append(Paragraph(paragraph_text, text_style))
+                story.append(Spacer(1, 8))  # Space between paragraphs
+                paragraph = []
             elif len(paragraph) >= 8 or i == len(entries) - 1:
                 # Force end paragraph if too long or at the end
-                paragraph_text = " ".join(paragraph)
+                # Try to find a better ending point by looking for sentence endings
+                if i < len(entries) - 1:
+                    # Look ahead up to 3 more entries to find a sentence ending
+                    look_ahead = []
+                    for j in range(i + 1, min(i + 4, len(entries))):
+                        look_ahead.append(entries[j].text.replace('\n', ' '))
+                        if look_ahead[-1].strip().endswith(('.', '!', '?')):
+                            # Found a sentence ending, extend paragraph
+                            paragraph_text += " " + " ".join(look_ahead)
+                            i = j  # Skip processed entries
+                            break
+                
+                # Add paragraph with better formatting
+                text_style = ParagraphStyle(
+                    'NormalText',
+                    parent=styles['Normal'],
+                    fontName=chinese_font,
+                    fontSize=13,
+                    leading=18,
+                    spaceAfter=12,
+                    firstLineIndent=0,  # No indentation
+                    leftIndent=0,
+                    rightIndent=0
+                )
+                story.append(Paragraph(paragraph_text, text_style))
+                story.append(Spacer(1, 8))  # Space between paragraphs
+                paragraph = []
                 
                 # Add paragraph with better formatting
                 text_style = ParagraphStyle(
