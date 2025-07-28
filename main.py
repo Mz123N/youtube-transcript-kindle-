@@ -404,22 +404,6 @@ def generate_pdf(title, sections, output_filename):
                 story.append(Paragraph(paragraph_text, text_style))
                 story.append(Spacer(1, 8))  # Space between paragraphs
                 paragraph = []
-                
-                # Add paragraph with better formatting
-                text_style = ParagraphStyle(
-                    'NormalText',
-                    parent=styles['Normal'],
-                    fontName=chinese_font,
-                    fontSize=13,
-                    leading=18,
-                    spaceAfter=12,
-                    firstLineIndent=0,  # No indentation
-                    leftIndent=0,
-                    rightIndent=0
-                )
-                story.append(Paragraph(paragraph_text, text_style))
-                story.append(Spacer(1, 8))  # Space between paragraphs
-                paragraph = []
         
         story.append(Spacer(1, 25))  # Extra space after each section
     
