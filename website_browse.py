@@ -117,9 +117,6 @@ st.markdown("""
 st.markdown("""
 <div class="demo-video-container">
     <div class="demo-video-title">🎬 See How It Works</div>
-    <p style="color: #6c757d; font-size: 0.9rem; margin-bottom: 1rem;">
-        Watch Naval Ravikant & Chris Williamson's wisdom transform into a readable e-book
-    </p>
 </div>
 """, unsafe_allow_html=True)
 
