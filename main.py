@@ -228,13 +228,22 @@ def end_section_at_sentence(entries):
     if not entries:
         return entries
     
-    # Look for sentence endings in the last few entries
-    for i in range(len(entries) - 1, max(0, len(entries) - 5), -1):
+    # Look for sentence endings in the last 10 entries (more aggressive search)
+    for i in range(len(entries) - 1, max(0, len(entries) - 10), -1):
         text = entries[i].text.strip()
+        # Look for proper sentence endings
         if text.endswith('.') or text.endswith('!') or text.endswith('?'):
             return entries[:i+1]
     
-    # If no sentence ending found, return all entries
+    # If no sentence ending found, try to find the last complete thought
+    # Look for common sentence patterns
+    for i in range(len(entries) - 1, max(0, len(entries) - 15), -1):
+        text = entries[i].text.strip().lower()
+        # Look for common sentence endings
+        if any(ending in text for ending in ['.', '!', '?', 'because', 'therefore', 'however', 'finally', 'in conclusion']):
+            return entries[:i+1]
+    
+    # If still no sentence ending found, return all entries
     return entries
 
 def create_title_page(title, video_id):
@@ -372,11 +381,11 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs of ~5 lines for readability (same as EPUB)
+        # Group transcript into paragraphs of ~10 lines for longer paragraphs
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            if len(paragraph) >= 5 or i == len(entries) - 1:
+            if len(paragraph) >= 10 or i == len(entries) - 1:
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
                 
@@ -388,7 +397,7 @@ def generate_pdf(title, sections, output_filename):
                     fontSize=13,
                     leading=18,
                     spaceAfter=12,
-                    firstLineIndent=20,  # Indent first line
+                    firstLineIndent=0,  # No indentation
                     leftIndent=0,
                     rightIndent=0
                 )

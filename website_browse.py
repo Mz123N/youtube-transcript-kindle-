@@ -210,7 +210,7 @@ if st.button("Generate and Send"):
         st.write(f"Transcript fetched: {len(transcript)} entries")
         
         st.write("Step 2: Grouping into sections...")
-        sections = group_transcript_by_interval(transcript, interval_seconds=1200)
+        sections = group_transcript_by_interval(transcript, interval_seconds=1200)  # 20 min sections
         st.write(f"Sections created: {len(sections)}")
         
         # 3. Generate file based on format choice
