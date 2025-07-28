@@ -75,24 +75,40 @@ with col2:
 st.markdown("""
 <style>
     .quote-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
         border-radius: 15px;
         margin: 1rem 0;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    .quote-content {
+        flex: 1;
+        text-align: left;
     }
     .quote-text {
         font-size: 1.3rem;
         font-style: italic;
         margin-bottom: 1rem;
         line-height: 1.6;
+        color: #495057;
     }
     .quote-author {
         font-size: 1rem;
         font-weight: bold;
-        opacity: 0.9;
+        color: #6c757d;
+    }
+    .speaker-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #dee2e6;
+        filter: grayscale(100%);
+        opacity: 0.8;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -104,31 +120,38 @@ import time
 quotes = [
     {
         "text": "The most important skill for getting rich is becoming a perpetual learner.",
-        "author": "Naval Ravikant"
+        "author": "Naval Ravikant",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "Read what you love until you love to read.",
-        "author": "Naval Ravikant"
+        "author": "Naval Ravikant",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "The best investment you can make is in yourself.",
-        "author": "Warren Buffett"
+        "author": "Warren Buffett",
+        "image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "Knowledge is the new money. Information is the new wealth.",
-        "author": "Balaji Srinivasan"
+        "author": "Balaji Srinivasan",
+        "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "The internet is the greatest library ever created.",
-        "author": "Balaji Srinivasan"
+        "author": "Balaji Srinivasan",
+        "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "Success is not about being the best. It's about being better than you were yesterday.",
-        "author": "Alex Hormozi"
+        "author": "Alex Hormozi",
+        "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
     },
     {
         "text": "The more you learn, the more you earn.",
-        "author": "Alex Hormozi"
+        "author": "Alex Hormozi",
+        "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
     }
 ]
 
@@ -136,8 +159,11 @@ quotes = [
 quote = random.choice(quotes)
 st.markdown(f'''
 <div class="quote-container">
-    <div class="quote-text">"{quote['text']}"</div>
-    <div class="quote-author">— {quote['author']}</div>
+    <img src="{quote['image']}" alt="{quote['author']}" class="speaker-image">
+    <div class="quote-content">
+        <div class="quote-text">"{quote['text']}"</div>
+        <div class="quote-author">— {quote['author']}</div>
+    </div>
 </div>
 ''', unsafe_allow_html=True)
 
