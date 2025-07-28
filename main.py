@@ -389,19 +389,8 @@ def generate_pdf(title, sections, output_filename):
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
                 
-                # Check if paragraph ends with complete sentence
-                if not paragraph_text.strip().endswith(('.', '!', '?')):
-                    # Look ahead to find a complete sentence ending
-                    look_ahead = []
-                    j = i + 1
-                    while j < len(entries) and len(look_ahead) < 3:
-                        look_ahead.append(entries[j].text.replace('\n', ' '))
-                        if look_ahead[-1].strip().endswith(('.', '!', '?')):
-                            # Found complete sentence, extend paragraph
-                            paragraph_text += " " + " ".join(look_ahead)
-                            i = j  # Update index to skip processed entries
-                            break
-                        j += 1
+                # Keep paragraphs as they are - don't force complete sentences
+                # This preserves the natural flow of the transcript
                 
                 # Add paragraph with better formatting
                 text_style = ParagraphStyle(
