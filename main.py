@@ -61,38 +61,82 @@ def fetch_transcript_with_playwright(video_id):
             
             # Try to find and click the "Show transcript" button
             try:
-                # Look for transcript button
-                transcript_button = page.locator('button[aria-label*="transcript"], button[aria-label*="Transcript"]')
-                if transcript_button.count() > 0:
-                    transcript_button.first.click()
-                    page.wait_for_timeout(2000)  # Wait for transcript to load
+                # Look for transcript button with multiple selectors
+                transcript_button_selectors = [
+                    'button[aria-label*="transcript"]',
+                    'button[aria-label*="Transcript"]',
+                    'button[aria-label*="字幕"]',
+                    'button[aria-label*="字幕"]',
+                    '[data-testid="transcript-button"]',
+                    'button:has-text("Show transcript")',
+                    'button:has-text("字幕")'
+                ]
                 
-                # Extract transcript text
-                transcript_elements = page.locator('[data-testid="transcript-segment"]')
-                if transcript_elements.count() == 0:
-                    # Try alternative selectors
-                    transcript_elements = page.locator('.ytd-transcript-segment-renderer')
+                transcript_button = None
+                for selector in transcript_button_selectors:
+                    try:
+                        button = page.locator(selector)
+                        if button.count() > 0:
+                            transcript_button = button.first
+                            break
+                    except:
+                        continue
                 
-                if transcript_elements.count() == 0:
-                    raise Exception("No transcript found on page")
+                if transcript_button:
+                    transcript_button.click()
+                    page.wait_for_timeout(3000)  # Wait for transcript to load
+                
+                # Extract transcript text with multiple selectors
+                transcript_selectors = [
+                    '[data-testid="transcript-segment"]',
+                    '.ytd-transcript-segment-renderer',
+                    '.ytd-transcript-segment',
+                    '[data-testid="transcript-text"]'
+                ]
+                
+                transcript_elements = None
+                for selector in transcript_selectors:
+                    try:
+                        elements = page.locator(selector)
+                        if elements.count() > 0:
+                            transcript_elements = elements
+                            break
+                    except:
+                        continue
+                
+                if not transcript_elements or transcript_elements.count() == 0:
+                    # Try to find any text that looks like a transcript
+                    page_text = page.text_content('body')
+                    if 'transcript' in page_text.lower() or '字幕' in page_text:
+                        raise Exception("Transcript button found but transcript content not accessible")
+                    else:
+                        raise Exception("No transcript found on page")
                 
                 transcript = []
                 for i in range(transcript_elements.count()):
                     element = transcript_elements.nth(i)
                     text = element.text_content()
-                    if text:
+                    if text and text.strip():
                         # Parse timestamp and text
                         parts = text.split('\n')
                         if len(parts) >= 2:
-                            timestamp = parts[0]
-                            content = ' '.join(parts[1:])
+                            timestamp = parts[0].strip()
+                            content = ' '.join(parts[1:]).strip()
+                            
+                            # Skip if no content
+                            if not content:
+                                continue
+                                
                             # Convert timestamp to seconds
-                            time_parts = timestamp.split(':')
-                            if len(time_parts) == 2:
-                                seconds = int(time_parts[0]) * 60 + int(time_parts[1])
-                            elif len(time_parts) == 3:
-                                seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
-                            else:
+                            try:
+                                time_parts = timestamp.split(':')
+                                if len(time_parts) == 2:
+                                    seconds = int(time_parts[0]) * 60 + int(time_parts[1])
+                                elif len(time_parts) == 3:
+                                    seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
+                                else:
+                                    seconds = 0
+                            except:
                                 seconds = 0
                             
                             transcript.append({
@@ -101,6 +145,8 @@ def fetch_transcript_with_playwright(video_id):
                             })
                 
                 browser.close()
+                if not transcript:
+                    raise Exception("No transcript content could be extracted")
                 return transcript
             except Exception as e:
                 browser.close()
@@ -112,9 +158,22 @@ def fetch_transcript_with_playwright(video_id):
 def fetch_transcript(video_id):
     """Try API first, then fallback to Playwright if needed."""
     try:
-        # Try the regular API first
-        transcript = YouTubeTranscriptApi().fetch(video_id)
-        return transcript
+        # Try the regular API first with multiple language attempts
+        try:
+            transcript = YouTubeTranscriptApi().fetch(video_id)
+            return transcript
+        except Exception as lang_error:
+            # Try with different languages if English fails
+            try:
+                transcript = YouTubeTranscriptApi().fetch(video_id, languages=['zh-TW', 'zh-CN', 'ja', 'ko'])
+                return transcript
+            except:
+                # If language-specific fails, try auto-detection
+                try:
+                    transcript = YouTubeTranscriptApi().fetch(video_id, languages=['auto'])
+                    return transcript
+                except:
+                    raise lang_error
     except Exception as api_error:
         # If API fails, try Playwright as fallback
         if PLAYWRIGHT_AVAILABLE:
