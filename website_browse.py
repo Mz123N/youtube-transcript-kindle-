@@ -181,22 +181,9 @@ interval_choice = st.selectbox(
     index=2  # Default to 20 min
 )
 
-# Delivery section
-st.markdown("### 📧 Delivery Options")
-user_email = st.text_input("Your Email (to receive the file)")
-
 # Set default sender credentials (your email)
 sender_email = "mengnan188@gmail.com"  # Your Gmail address
 sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_here')  # Get from environment variable
-
-# Kindle delivery option
-send_to_kindle_option = st.checkbox("Send to Kindle directly")
-
-if send_to_kindle_option:
-    st.markdown('<div class="info-box">📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at <a href="https://www.amazon.com/sendtokindle/email" target="_blank">Amazon\'s Send to Kindle page</a>.</div>', unsafe_allow_html=True)
-    kindle_email = st.text_input("Kindle Email")
-else:
-    kindle_email = None
 
 if st.button("Generate"):
     try:
@@ -266,10 +253,22 @@ if st.button("Generate"):
         except Exception as e:
             st.error(f"Error preparing download: {e}")
 
-        # 5. Step 2: Send Options
-        st.markdown("### 📧 Send Options")
+        # 5. Step 2: Dynamic Delivery Options
+        st.markdown("### 📧 Delivery Options")
         
-        # Email sending option
+        # Email input
+        user_email = st.text_input("Your Email (to receive the file)")
+        
+        # Kindle delivery option
+        send_to_kindle_option = st.checkbox("Send to Kindle directly")
+        
+        if send_to_kindle_option:
+            st.markdown('<div class="info-box">📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at <a href="https://www.amazon.com/sendtokindle/email" target="_blank">Amazon\'s Send to Kindle page</a>.</div>', unsafe_allow_html=True)
+            kindle_email = st.text_input("Kindle Email")
+        else:
+            kindle_email = None
+        
+        # Send options
         if user_email:
             if st.button("📧 Send to my email directly"):
                 st.write(f"Attempting to send file to email: {user_email}")
@@ -278,8 +277,6 @@ if st.button("Generate"):
                     st.success(f"✅ File sent to your email: {user_email}")
                 else:
                     st.error("❌ Failed to send file to your email. Please check your email address and try again.")
-        else:
-            st.info("💡 Enter your email above to enable email sending")
         
         # Kindle sending option (only for EPUB)
         if format_choice == "EPUB" and send_to_kindle_option and kindle_email:
