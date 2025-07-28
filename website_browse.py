@@ -186,6 +186,13 @@ sender_email = "mengnan188@gmail.com"  # Your Gmail address
 sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_here')  # Get from environment variable
 
 if st.button("Generate"):
+    # Store generation state
+    st.session_state.generated = True
+    st.session_state.youtube_url = youtube_url
+    st.session_state.book_title = book_title
+    st.session_state.format_choice = format_choice
+    st.session_state.interval_choice = interval_choice
+    
     try:
         st.info("Starting process...")
 
@@ -226,7 +233,21 @@ if st.button("Generate"):
             generate_pdf(video_title, sections, output_filename)
         
         st.write(f"File generated successfully: {output_filename}")
+        
+        # Store file info in session state
+        st.session_state.output_filename = output_filename
+        st.session_state.video_title = video_title
 
+    except Exception as e:
+        st.error("An error occurred while generating or saving the book.")
+        st.exception(e)
+
+# Show download and send options if file was generated
+if st.session_state.get('generated', False):
+    output_filename = st.session_state.get('output_filename')
+    video_title = st.session_state.get('video_title')
+    
+    if output_filename and video_title:
         # 4. Step 1: Direct Download
         st.markdown("### 📥 Download Your File")
         
@@ -236,6 +257,7 @@ if st.button("Generate"):
                 file_data = f.read()
             
             # Create download button based on format
+            format_choice = st.session_state.get('format_choice')
             if format_choice == "EPUB":
                 st.download_button(
                     label="📥 Download EPUB",
@@ -289,7 +311,3 @@ if st.button("Generate"):
             st.info("💡 Kindle sending is only available for EPUB files")
         elif send_to_kindle_option and not kindle_email:
             st.info("💡 Enter your Kindle email above to enable Kindle sending")
-
-    except Exception as e:
-        st.error("An error occurred while generating or saving the book.")
-        st.exception(e)
