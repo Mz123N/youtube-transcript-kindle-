@@ -381,24 +381,13 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-                # Group transcript into paragraphs of ~5 lines, but end at nearest sentence
+                # Group transcript into paragraphs of ~5 lines for readability
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
-            
-            # Check if we should end paragraph (5 lines or at the end)
             if len(paragraph) >= 5 or i == len(entries) - 1:
                 # Create paragraph text
                 paragraph_text = " ".join(paragraph)
-                
-                # Look for the nearest sentence ending in the paragraph
-                # Start from the end and work backwards
-                words = paragraph_text.split()
-                for j in range(len(words) - 1, -1, -1):
-                    if words[j].endswith(('.', '!', '?')):
-                        # Found a sentence ending, cut paragraph here
-                        paragraph_text = " ".join(words[:j+1])
-                        break
                 
                 # Add paragraph with better formatting
                 text_style = ParagraphStyle(
