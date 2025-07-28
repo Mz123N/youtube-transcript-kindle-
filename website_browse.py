@@ -173,6 +173,14 @@ st.markdown("### 📝 Content Details")
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
 format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
+
+# Interval selection
+st.markdown("### ⏱️ Section Length")
+interval_choice = st.selectbox(
+    "How long of the interval you want to classify this conversation?",
+    ["5 min", "10 min", "20 min", "30 min"],
+    index=2  # Default to 20 min
+)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Delivery section
@@ -210,8 +218,18 @@ if st.button("Generate and Send"):
         st.write(f"Transcript fetched: {len(transcript)} entries")
         
         st.write("Step 2: Grouping into sections...")
-        sections = group_transcript_by_interval(transcript, interval_seconds=1200)
-        st.write(f"Sections created: {len(sections)}")
+        
+        # Convert interval choice to seconds
+        interval_mapping = {
+            "5 min": 300,
+            "10 min": 600,
+            "20 min": 1200,
+            "30 min": 1800
+        }
+        interval_seconds = interval_mapping[interval_choice]
+        
+        sections = group_transcript_by_interval(transcript, interval_seconds=interval_seconds)
+        st.write(f"Sections created: {len(sections)} with {interval_choice} intervals")
         
         # 3. Generate file based on format choice
         st.write(f"Step 3: Generating {format_choice} file...")
