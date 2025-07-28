@@ -240,33 +240,58 @@ if st.button("Generate and Send"):
         
         st.write(f"File generated successfully: {output_filename}")
 
-        # 4. Handle delivery based on user choice
-        success_messages = []
+        # 4. Step 1: Direct Download
+        st.markdown("### 📥 Download Your File")
         
-        # Always send to user's email
-        if user_email:
-            st.write(f"Attempting to send file to email: {user_email}")
+        # Read the generated file for download
+        try:
+            with open(output_filename, 'rb') as f:
+                file_data = f.read()
             
-            if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
-                success_messages.append(f"File sent to your email: {user_email}")
-                st.write("Email sent successfully!")
-            else:
-                st.error("Failed to send file to your email. Please check your email address and try again.")
-        else:
-            st.write("No user email provided, skipping email delivery")
+            # Create download button based on format
+            if format_choice == "EPUB":
+                st.download_button(
+                    label="📥 Download EPUB",
+                    data=file_data,
+                    file_name=output_filename,
+                    mime="application/epub+zip"
+                )
+            else:  # PDF
+                st.download_button(
+                    label="📥 Download PDF",
+                    data=file_data,
+                    file_name=output_filename,
+                    mime="application/pdf"
+                )
+        except Exception as e:
+            st.error(f"Error preparing download: {e}")
+
+        # 5. Step 2: Send Options
+        st.markdown("### 📧 Send Options")
         
-        # Send to Kindle if option is selected
-        if send_to_kindle_option and kindle_email:
-            if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
-                success_messages.append(f"File sent to Kindle: {kindle_email}")
-            else:
-                st.error("Failed to send to Kindle. Please check your Kindle email credentials.")
-        
-        # Show success message
-        if success_messages:
-            st.markdown('<div class="success-box">🎉 <strong>Success!</strong> ' + " | ".join(success_messages) + '</div>', unsafe_allow_html=True)
+        # Email sending option
+        if user_email:
+            if st.button("📧 Send to Email"):
+                st.write(f"Attempting to send file to email: {user_email}")
+                
+                if send_file_via_email(output_filename, user_email, video_title, sender_email, sender_app_password):
+                    st.success(f"✅ File sent to your email: {user_email}")
+                else:
+                    st.error("❌ Failed to send file to your email. Please check your email address and try again.")
         else:
-            st.warning("File generated but no delivery method selected.")
+            st.info("💡 Enter your email above to enable email sending")
+        
+        # Kindle sending option (only for EPUB)
+        if format_choice == "EPUB" and send_to_kindle_option and kindle_email:
+            if st.button("📚 Send to Kindle"):
+                if send_to_kindle(output_filename, video_title, kindle_email, sender_email, sender_app_password):
+                    st.success(f"✅ File sent to Kindle: {kindle_email}")
+                else:
+                    st.error("❌ Failed to send to Kindle. Please check your Kindle email credentials.")
+        elif format_choice == "PDF" and send_to_kindle_option:
+            st.info("💡 Kindle sending is only available for EPUB files")
+        elif send_to_kindle_option and not kindle_email:
+            st.info("💡 Enter your Kindle email above to enable Kindle sending")
 
     except Exception as e:
         st.error("An error occurred while generating or saving the book.")
