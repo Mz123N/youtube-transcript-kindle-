@@ -40,14 +40,11 @@ def fetch_transcript(video_id):
         transcript = YouTubeTranscriptApi().fetch(video_id)
         return transcript
     except TranscriptsDisabled:
-        print("Transcripts are disabled for this video.")
-        sys.exit(1)
+        raise Exception("Transcripts are disabled for this video.")
     except NoTranscriptFound:
-        print("No transcript found for this video.")
-        sys.exit(1)
+        raise Exception("No transcript found for this video.")
     except Exception as e:
-        print(f"Error fetching transcript: {e}")
-        sys.exit(1)
+        raise Exception(f"Error fetching transcript: {e}")
 
 def format_timestamp(seconds):
     mins = int(seconds // 60)
