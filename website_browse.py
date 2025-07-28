@@ -130,28 +130,28 @@ quotes = [
     },
     {
         "text": "The best investment you can make is in yourself.",
-        "author": "Warren Buffett",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Warren_Buffett_at_TCU_3_%2835168169014%29_%28cropped%29.jpg/800px-Warren_Buffett_at_TCU_3_%2835168169014%29_%28cropped%29.jpg"
+        "author": "Charlie Munger",
+        "image": "https://image.cnbcfm.com/api/v1/image/107340287-1701209338546-Charlie_Munger_1.jpg?v=1701214769"
     },
     {
         "text": "Knowledge is the new money. Information is the new wealth.",
         "author": "Balaji Srinivasan",
-        "image": "https://pbs.twimg.com/profile_images/1588640551871139840/7VzqKqXj_400x400.jpg"
+        "image": "https://www.fintechfestival.sg/hs-fs/hubfs/speakers/gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg?width=225&height=225&name=gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg"
     },
     {
         "text": "The internet is the greatest library ever created.",
         "author": "Balaji Srinivasan",
-        "image": "https://pbs.twimg.com/profile_images/1588640551871139840/7VzqKqXj_400x400.jpg"
+        "image": "https://www.fintechfestival.sg/hs-fs/hubfs/speakers/gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg?width=225&height=225&name=gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg"
     },
     {
         "text": "Success is not about being the best. It's about being better than you were yesterday.",
         "author": "Alex Hormozi",
-        "image": "https://pbs.twimg.com/profile_images/1642784892478320640/8aPjHh6k_400x400.jpg"
+        "image": "https://www.acquisition.com/hubfs/ACQ_Web_Bio-AlexHormozi%202.png"
     },
     {
         "text": "The more you learn, the more you earn.",
         "author": "Alex Hormozi",
-        "image": "https://pbs.twimg.com/profile_images/1642784892478320640/8aPjHh6k_400x400.jpg"
+        "image": "https://www.acquisition.com/hubfs/ACQ_Web_Bio-AlexHormozi%202.png"
     }
 ]
 
