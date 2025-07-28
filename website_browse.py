@@ -16,11 +16,74 @@ from main import (
     send_file_via_email
 )
 
-st.title("Turn Your Favorite Podcasts into E-Books")
+# Custom CSS for better styling
+st.markdown("""
+<style>
+    .main-header {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        color: #1f77b4;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: linear-gradient(90deg, #f0f8ff 0%, #e6f3ff 100%);
+        border-radius: 10px;
+        border-left: 5px solid #1f77b4;
+    }
+    .feature-box {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+        margin: 0.5rem 0;
+    }
+    .input-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin: 1rem 0;
+    }
+    .success-box {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    .info-box {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
 
+# Main header with icon
+st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
+
+# Feature highlights
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown('<div class="feature-box"><h4>⚡ Instant Conversion</h4><p>Transform YouTube videos into readable e-books in seconds</p></div>', unsafe_allow_html=True)
+with col2:
+    st.markdown('<div class="feature-box"><h4>📱 Read Anywhere</h4><p>Access your content on Kindle, phone, or computer</p></div>', unsafe_allow_html=True)
+with col3:
+    st.markdown('<div class="feature-box"><h4>🎯 Smart Formatting</h4><p>Clean, organized content with proper sections</p></div>', unsafe_allow_html=True)
+
+# Input section with styling
+st.markdown('<div class="input-section">', unsafe_allow_html=True)
+st.markdown("### 📝 Content Details")
 youtube_url = st.text_input("YouTube Link")
 book_title = st.text_input("Book Title")
 format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Delivery section
+st.markdown('<div class="input-section">', unsafe_allow_html=True)
+st.markdown("### 📧 Delivery Options")
 user_email = st.text_input("Your Email (to receive the file)")
 
 # Set default sender credentials (your email)
@@ -31,10 +94,11 @@ sender_app_password = os.environ.get('SENDER_APP_PASSWORD', 'your_app_password_h
 send_to_kindle_option = st.checkbox("Send to Kindle directly")
 
 if send_to_kindle_option:
-    st.info("📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at [Amazon's Send to Kindle page](https://www.amazon.com/sendtokindle/email).")
+    st.markdown('<div class="info-box">📧 **Kindle Email Address:** This is the email address linked to your Kindle device. You can find your Kindle email address at <a href="https://www.amazon.com/sendtokindle/email" target="_blank">Amazon\'s Send to Kindle page</a>.</div>', unsafe_allow_html=True)
     kindle_email = st.text_input("Kindle Email")
 else:
     kindle_email = None
+st.markdown('</div>', unsafe_allow_html=True)
 
 if st.button("Generate and Send"):
     try:
@@ -93,7 +157,7 @@ if st.button("Generate and Send"):
         
         # Show success message
         if success_messages:
-            st.success("Success! " + " | ".join(success_messages))
+            st.markdown('<div class="success-box">🎉 <strong>Success!</strong> ' + " | ".join(success_messages) + '</div>', unsafe_allow_html=True)
         else:
             st.warning("File generated but no delivery method selected.")
 
