@@ -140,9 +140,7 @@ st.markdown("""
 
 # Demo video
 st.markdown("""
-<div class="demo-video-container">
-    <div class="demo-video-title">🎬 See How It Works</div>
-</div>
+<div class="demo-video-title">🎬 See How It Works</div>
 """, unsafe_allow_html=True)
 
 # Embed demo video
