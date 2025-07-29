@@ -189,7 +189,7 @@ def fetch_transcript(video_id):
                 return transcript
             except Exception as playwright_error:
                 # If both fail, check if it's a subtitles disabled issue
-                if "Transcripts are disabled" in str(api_error):
+                if "Subtitles are disabled" in str(api_error) or "Transcripts are disabled" in str(api_error):
                     raise Exception("⚠️ **Subtitles Disabled**\n\nThis YouTube video has subtitles disabled by the creator. Unfortunately, we cannot generate a transcript for this video.\n\n**Try a different video** that has subtitles enabled, or contact the video creator to enable subtitles.")
                 elif "No transcript found" in str(api_error):
                     raise Exception("⚠️ **No Transcript Available**\n\nThis YouTube video doesn't have any transcript available. This could be because:\n\n• The creator hasn't enabled subtitles\n• The video is very old and never had transcripts generated\n• There are copyright restrictions\n\n**Try a different video** that has subtitles enabled.")
@@ -197,7 +197,7 @@ def fetch_transcript(video_id):
                     raise Exception(f"API failed: {api_error}. Playwright failed: {playwright_error}")
         else:
             # If Playwright not available, just raise the API error
-            if "Transcripts are disabled" in str(api_error):
+            if "Subtitles are disabled" in str(api_error) or "Transcripts are disabled" in str(api_error):
                 raise Exception("⚠️ **Subtitles Disabled**\n\nThis YouTube video has subtitles disabled by the creator. Unfortunately, we cannot generate a transcript for this video.\n\n**Try a different video** that has subtitles enabled, or contact the video creator to enable subtitles.")
             elif "No transcript found" in str(api_error):
                 raise Exception("⚠️ **No Transcript Available**\n\nThis YouTube video doesn't have any transcript available. This could be because:\n\n• The creator hasn't enabled subtitles\n• The video is very old and never had transcripts generated\n• There are copyright restrictions\n\n**Try a different video** that has subtitles enabled.")
