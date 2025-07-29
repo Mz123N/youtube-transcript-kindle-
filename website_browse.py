@@ -47,16 +47,16 @@ from main import (
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2.8rem;
-        font-weight: 300;
+        font-size: 1.8rem;
+        font-weight: 400;
         text-align: center;
         color: #ffffff;
-        margin-bottom: 2rem;
-        padding: 2.5rem;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
         background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-        border-radius: 15px;
-        border: 2px solid #34495e;
-        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.3);
+        border-radius: 12px;
+        border: 1px solid #34495e;
+        box-shadow: 0 4px 16px rgba(44, 62, 80, 0.2);
         position: relative;
         overflow: hidden;
     }
