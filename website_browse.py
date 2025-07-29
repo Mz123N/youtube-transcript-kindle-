@@ -151,12 +151,7 @@ st.video("https://www.youtube.com/watch?v=afzBAW9Q64k")
 # Main header with icon
 st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
 
-# Feature highlights
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown('<div class="feature-box"><h4>⚡ Instant Conversion</h4><p>Transform YouTube videos into readable e-books in seconds</p></div>', unsafe_allow_html=True)
-with col2:
-    st.markdown('<div class="feature-box"><h4>📱 Read Anywhere</h4><p>Access your content on Kindle, phone, or computer</p></div>', unsafe_allow_html=True)
+
 
 # Inspirational quotes section
 st.markdown("""
@@ -201,7 +196,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Load quotes from JSON file
-@st.cache_data
+@st.cache_data(ttl=60)  # Cache for 60 seconds to allow updates
 def load_authors():
     try:
         with open('quotes.json', 'r') as f:
