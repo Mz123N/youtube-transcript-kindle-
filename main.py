@@ -254,19 +254,41 @@ def transcript_sections_to_epub_chapters(sections):
     for idx, (start, end, entries) in enumerate(sections, 1):
         section_title = f"Section {idx}: {format_timestamp(start)}–{format_timestamp(end)}"
         html = f"<h2>{section_title}</h2>\n"
-        # Group transcript into paragraphs ending at sentence boundaries
+        # Check if this video has punctuation (sample first 50 entries)
+        has_punctuation = False
+        for entry in entries[:50]:
+            if entry.text.strip().endswith(('.', '!', '?')):
+                has_punctuation = True
+                break
+        
+        # Group transcript into paragraphs based on punctuation availability
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
             
-            # Check if current text ends with a sentence ending
-            current_text = entry.text.strip()
-            if current_text.endswith(('.', '!', '?')):
-                # Create paragraph text
-                paragraph_text = " ".join(paragraph)
-                html += f"<p class='block'>{paragraph_text}</p>\n"
-                paragraph = []
-            elif i == len(entries) - 1:
+            if has_punctuation:
+                # Use original logic: end paragraph at sentence boundaries
+                current_text = entry.text.strip()
+                if current_text.endswith(('.', '!', '?')):
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    html += f"<p class='block'>{paragraph_text}</p>\n"
+                    paragraph = []
+            else:
+                # Use new logic: end paragraph every 6 entries if no sentence ending
+                current_text = entry.text.strip()
+                if current_text.endswith(('.', '!', '?')):
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    html += f"<p class='block'>{paragraph_text}</p>\n"
+                    paragraph = []
+                elif len(paragraph) >= 6:  # Create paragraph every 6 entries if no sentence ending
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    html += f"<p class='block'>{paragraph_text}</p>\n"
+                    paragraph = []
+            
+            if i == len(entries) - 1:
                 # End of entries, add remaining content
                 paragraph_text = " ".join(paragraph)
                 html += f"<p class='block'>{paragraph_text}</p>\n"
@@ -381,32 +403,81 @@ def generate_pdf(title, sections, output_filename):
         )
         story.append(Paragraph(section_title, header_style))
         
-        # Group transcript into paragraphs ending at sentence boundaries
+        # Check if this video has punctuation (sample first 50 entries)
+        has_punctuation = False
+        for entry in entries[:50]:
+            if entry.text.strip().endswith(('.', '!', '?')):
+                has_punctuation = True
+                break
+        
+        # Group transcript into paragraphs based on punctuation availability
         paragraph = []
         for i, entry in enumerate(entries):
             paragraph.append(entry.text.replace('\n', ' '))
             
-            # Check if current text ends with a sentence ending
-            current_text = entry.text.strip()
-            if current_text.endswith(('.', '!', '?')):
-                # Create paragraph text
-                paragraph_text = " ".join(paragraph)
-                
-                # Add paragraph with better formatting
-                text_style = ParagraphStyle(
-                    'NormalText',
-                    parent=styles['Normal'],
-                    fontName=chinese_font,
-                    fontSize=13,
-                    leading=18,
-                    spaceAfter=12,
-                    firstLineIndent=0,  # No indent first line
-                    leftIndent=0,
-                    rightIndent=0
-                )
-                story.append(Paragraph(paragraph_text, text_style))
-                story.append(Spacer(1, 8))  # Space between paragraphs
-                paragraph = []
+            if has_punctuation:
+                # Use original logic: end paragraph at sentence boundaries
+                current_text = entry.text.strip()
+                if current_text.endswith(('.', '!', '?')):
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    
+                    # Add paragraph with better formatting
+                    text_style = ParagraphStyle(
+                        'NormalText',
+                        parent=styles['Normal'],
+                        fontName=chinese_font,
+                        fontSize=13,
+                        leading=18,
+                        spaceAfter=12,
+                        firstLineIndent=0,  # No indent first line
+                        leftIndent=0,
+                        rightIndent=0
+                    )
+                    story.append(Paragraph(paragraph_text, text_style))
+                    story.append(Spacer(1, 8))  # Space between paragraphs
+                    paragraph = []
+            else:
+                # Use new logic: end paragraph every 6 entries if no sentence ending
+                current_text = entry.text.strip()
+                if current_text.endswith(('.', '!', '?')):
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    
+                    # Add paragraph with better formatting
+                    text_style = ParagraphStyle(
+                        'NormalText',
+                        parent=styles['Normal'],
+                        fontName=chinese_font,
+                        fontSize=13,
+                        leading=18,
+                        spaceAfter=12,
+                        firstLineIndent=0,  # No indent first line
+                        leftIndent=0,
+                        rightIndent=0
+                    )
+                    story.append(Paragraph(paragraph_text, text_style))
+                    story.append(Spacer(1, 8))  # Space between paragraphs
+                    paragraph = []
+                elif len(paragraph) >= 6:  # Create paragraph every 6 entries if no sentence ending
+                    # Create paragraph text
+                    paragraph_text = " ".join(paragraph)
+                    
+                    # Add paragraph with better formatting
+                    text_style = ParagraphStyle(
+                        'NormalText',
+                        parent=styles['Normal'],
+                        fontName=chinese_font,
+                        fontSize=13,
+                        leading=18,
+                        spaceAfter=12,
+                        firstLineIndent=0,  # No indent first line
+                        leftIndent=0,
+                        rightIndent=0
+                    )
+                    story.append(Paragraph(paragraph_text, text_style))
+                    story.append(Spacer(1, 8))  # Space between paragraphs
+                    paragraph = []
         
         story.append(Spacer(1, 25))  # Extra space after each section
     
