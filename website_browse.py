@@ -47,39 +47,15 @@ from main import (
 st.markdown("""
 <style>
     .main-header {
-        font-size: 1.8rem;
-        font-weight: 400;
+        font-size: 2.5rem;
+        font-weight: bold;
         text-align: center;
-        color: #ffffff;
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-        border-radius: 12px;
-        border: 1px solid #34495e;
-        box-shadow: 0 4px 16px rgba(44, 62, 80, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-    .main-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-        animation: shimmer 3s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-    }
-    .main-header-text {
-        position: relative;
-        z-index: 2;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        letter-spacing: 1px;
-        line-height: 1.4;
+        color: #1f77b4;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: linear-gradient(90deg, #f0f8ff 0%, #e6f3ff 100%);
+        border-radius: 10px;
+        border-left: 5px solid #1f77b4;
     }
     .feature-box {
         background: #f8f9fa;
@@ -172,8 +148,8 @@ st.markdown("""
 # Embed demo video
 st.video("https://www.youtube.com/watch?v=afzBAW9Q64k")
 
-# Main header with philosophical styling
-st.markdown('<h1 class="main-header"><span class="main-header-text">📚 Turn Your Favorite Podcasts into E-Books</span></h1>', unsafe_allow_html=True)
+# Main header with icon
+st.markdown('<h1 class="main-header">📚 Turn Your Favorite Podcasts into E-Books</h1>', unsafe_allow_html=True)
 
 
 
