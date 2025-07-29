@@ -233,9 +233,21 @@ for author in authors:
             "image_url": author['image_url']
         })
 
-# Display a random quote from the selected quotes
+# Ensure variety by avoiding the same author twice in a row
 if selected_quotes:
-    quote = random.choice(selected_quotes)
+    # Get the last shown author from session state
+    last_author = st.session_state.get('last_author', None)
+    
+    # Filter out the last author if it exists
+    available_quotes = selected_quotes
+    if last_author and len(selected_quotes) > 1:
+        available_quotes = [q for q in selected_quotes if q['author'] != last_author]
+    
+    # Select a random quote from available quotes
+    quote = random.choice(available_quotes)
+    
+    # Store the current author for next time
+    st.session_state['last_author'] = quote['author']
 else:
     # Fallback if no quotes are available
     quote = {
