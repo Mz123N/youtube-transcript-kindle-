@@ -50,7 +50,7 @@ st.markdown("""
         font-size: 2.8rem;
         font-weight: 300;
         text-align: center;
-        color: #2c3e50;
+        color: #ffffff;
         margin-bottom: 2rem;
         padding: 2.5rem;
         background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
@@ -173,7 +173,7 @@ st.markdown("""
 st.video("https://www.youtube.com/watch?v=afzBAW9Q64k")
 
 # Main header with philosophical styling
-st.markdown('<h1 class="main-header"><span class="main-header-text">📚 Transform Wisdom into Timeless Knowledge</span></h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header"><span class="main-header-text">📚 Turn Your Favorite Podcasts into E-Books</span></h1>', unsafe_allow_html=True)
 
 
 
