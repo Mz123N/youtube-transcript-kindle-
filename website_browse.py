@@ -334,8 +334,16 @@ if st.button("Generate"):
         st.session_state.video_title = video_title
 
     except Exception as e:
-        st.error("An error occurred while generating or saving the book.")
-        st.exception(e)
+        error_message = str(e)
+        
+        # Check if it's a subtitles disabled error
+        if "Subtitles Disabled" in error_message or "No Transcript Available" in error_message:
+            st.error("❌ **Transcript Issue**")
+            st.markdown(error_message)
+            st.info("💡 **Tip**: Try a different YouTube video that has subtitles enabled. You can usually tell by looking for the CC (Closed Captions) button in the video player.")
+        else:
+            st.error("An error occurred while generating or saving the book.")
+            st.exception(e)
 
 # Show download and send options if file was generated
 if st.session_state.get('generated', False):
