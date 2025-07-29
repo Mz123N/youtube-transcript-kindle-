@@ -172,7 +172,7 @@ def fetch_transcript(video_id):
         except Exception as lang_error:
             # Try with different languages if English fails
             try:
-                transcript = YouTubeTranscriptApi().fetch(video_id, languages=['zh-TW', 'zh-CN', 'ja', 'ko'])
+                transcript = YouTubeTranscriptApi().fetch(video_id, languages=['zh-TW', 'zh-CN', 'zh-Hant', 'ja', 'ko'])
                 return transcript
             except:
                 # If language-specific fails, try auto-detection
