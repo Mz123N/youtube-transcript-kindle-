@@ -1,0 +1,45 @@
+{
+  "authors": [
+    {
+      "name": "Naval Ravikant",
+      "image_url": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg",
+      "quotes": [
+        "The most important skill for getting rich is becoming a perpetual learner.",
+        "Read what you love until you love to read.",
+        "Happiness is a choice and a skill and you can dedicate yourself to learning that skill and making that choice.",
+        "If you want to be successful, surround yourself with people who are more successful than you are.",
+        "The purpose of life is to be happy."
+      ]
+    },
+    {
+      "name": "Charlie Munger",
+      "image_url": "https://image.cnbcfm.com/api/v1/image/107340287-1701209338546-Charlie_Munger_1.jpg?v=1701214769",
+      "quotes": [
+        "The best investment you can make is in yourself.",
+        "In my whole life, I have known no wise people who didn't read all the time.",
+        "The big money is not in the buying and selling, but in the waiting.",
+        "It is remarkable how much long-term advantage people like us have gotten by trying to be consistently not stupid, instead of trying to be very intelligent."
+      ]
+    },
+    {
+      "name": "Balaji Srinivasan",
+      "image_url": "https://www.fintechfestival.sg/hs-fs/hubfs/speakers/gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg?width=225&height=225&name=gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg",
+      "quotes": [
+        "Knowledge is the new money. Information is the new wealth.",
+        "The internet is the greatest library ever created.",
+        "The future is already here – it's just not evenly distributed.",
+        "Code is law, and the internet is the new frontier."
+      ]
+    },
+    {
+      "name": "Alex Hormozi",
+      "image_url": "https://www.acquisition.com/hubfs/ACQ_Web_Bio-AlexHormozi%202.png",
+      "quotes": [
+        "Success is not about being the best. It's about being better than you were yesterday.",
+        "The more you learn, the more you earn.",
+        "Your network is your net worth.",
+        "The best time to start was yesterday. The second best time is now."
+      ]
+    }
+  ]
+} 

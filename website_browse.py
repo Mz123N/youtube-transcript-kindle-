@@ -3,6 +3,8 @@ import streamlit as st
 from dotenv import load_dotenv
 import subprocess
 import sys
+import json
+import random
 
 # Load environment variables from .env file
 load_dotenv()
@@ -198,53 +200,52 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Rotating quotes from popular podcasters
-import random
-import time
+# Load quotes from JSON file
+@st.cache_data
+def load_authors():
+    try:
+        with open('quotes.json', 'r') as f:
+            data = json.load(f)
+            return data['authors']
+    except FileNotFoundError:
+        # Fallback authors if JSON file is not found
+        return [
+            {
+                "name": "Naval Ravikant",
+                "image_url": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg",
+                "quotes": [
+                    "The most important skill for getting rich is becoming a perpetual learner.",
+                    "Read what you love until you love to read."
+                ]
+            }
+        ]
 
-quotes = [
-    {
+# Load authors and select one random quote from each author
+authors = load_authors()
+selected_quotes = []
+
+for author in authors:
+    if author['quotes']:  # Make sure author has quotes
+        random_quote = random.choice(author['quotes'])
+        selected_quotes.append({
+            "text": random_quote,
+            "author": author['name'],
+            "image_url": author['image_url']
+        })
+
+# Display a random quote from the selected quotes
+if selected_quotes:
+    quote = random.choice(selected_quotes)
+else:
+    # Fallback if no quotes are available
+    quote = {
         "text": "The most important skill for getting rich is becoming a perpetual learner.",
         "author": "Naval Ravikant",
-        "image": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg"
-    },
-    {
-        "text": "Read what you love until you love to read.",
-        "author": "Naval Ravikant",
-        "image": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg"
-    },
-    {
-        "text": "The best investment you can make is in yourself.",
-        "author": "Charlie Munger",
-        "image": "https://image.cnbcfm.com/api/v1/image/107340287-1701209338546-Charlie_Munger_1.jpg?v=1701214769"
-    },
-    {
-        "text": "Knowledge is the new money. Information is the new wealth.",
-        "author": "Balaji Srinivasan",
-        "image": "https://www.fintechfestival.sg/hs-fs/hubfs/speakers/gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg?width=225&height=225&name=gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg"
-    },
-    {
-        "text": "The internet is the greatest library ever created.",
-        "author": "Balaji Srinivasan",
-        "image": "https://www.fintechfestival.sg/hs-fs/hubfs/speakers/gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg?width=225&height=225&name=gZ-bFq1_mE6HiiFFEWf06FQf5W-1O1PrJZzd_YeYFLY.jpg"
-    },
-    {
-        "text": "Success is not about being the best. It's about being better than you were yesterday.",
-        "author": "Alex Hormozi",
-        "image": "https://www.acquisition.com/hubfs/ACQ_Web_Bio-AlexHormozi%202.png"
-    },
-    {
-        "text": "The more you learn, the more you earn.",
-        "author": "Alex Hormozi",
-        "image": "https://www.acquisition.com/hubfs/ACQ_Web_Bio-AlexHormozi%202.png"
+        "image_url": "https://images.squarespace-cdn.com/content/v1/58de89eb17bffc754e3c1d33/1552963210906-LVA904K3O50RP633WOVG/Aug+2016+Headshot.jpg"
     }
-]
-
-# Display a random quote each time
-quote = random.choice(quotes)
 st.markdown(f'''
 <div class="quote-container">
-    <img src="{quote['image']}" alt="{quote['author']}" class="speaker-image">
+    <img src="{quote['image_url']}" alt="{quote['author']}" class="speaker-image">
     <div class="quote-content">
         <div class="quote-text">"{quote['text']}"</div>
         <div class="quote-author">— {quote['author']}</div>
