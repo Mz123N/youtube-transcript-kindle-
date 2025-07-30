@@ -270,6 +270,7 @@ format_choice = st.selectbox("Choose format:", ["EPUB", "PDF"])
 
 # Interval selection
 st.markdown("### ⏱️ Section Length")
+st.markdown("This determines how your podcast will be divided into sections. For example, a 40-minute podcast with 10-minute intervals will be split into 4 parts.")
 interval_choice = st.selectbox(
     "How long of the interval you want to classify this conversation?",
     ["5 min", "10 min", "20 min", "30 min"],
