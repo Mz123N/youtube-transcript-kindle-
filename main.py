@@ -193,6 +193,8 @@ def fetch_transcript(video_id):
                     raise Exception("⚠️ **Subtitles Disabled**\n\nThis YouTube video has subtitles disabled by the creator. Unfortunately, we cannot generate a transcript for this video.\n\n**Try a different video** that has subtitles enabled, or contact the video creator to enable subtitles.")
                 elif "No transcript found" in str(api_error):
                     raise Exception("⚠️ **No Transcript Available**\n\nThis YouTube video doesn't have any transcript available. This could be because:\n\n• The creator hasn't enabled subtitles\n• The video is very old and never had transcripts generated\n• There are copyright restrictions\n\n**Try a different video** that has subtitles enabled.")
+                elif "YouTube is blocking requests" in str(api_error) or "IP has been blocked" in str(api_error):
+                    raise Exception("🚫 **YouTube Blocking Issue**\n\nThis is a common issue on cloud platforms. Here are some solutions:\n\n**Option 1: Try a different video**\n• Some videos work better than others\n• Try videos with popular creators\n\n**Option 2: Wait a few minutes**\n• Sometimes the issue resolves itself\n• Try again in 5-10 minutes\n\n**Option 3: Use Local Deployment**\n• Run the app locally on your computer\n• Uses your IP instead of cloud IP\n• Usually works better than cloud deployment\n\n**Technical Note**: YouTube blocks requests from cloud provider IPs. This is a limitation of the YouTube API.")
                 else:
                     raise Exception(f"API failed: {api_error}. Playwright failed: {playwright_error}")
         else:
@@ -201,6 +203,8 @@ def fetch_transcript(video_id):
                 raise Exception("⚠️ **Subtitles Disabled**\n\nThis YouTube video has subtitles disabled by the creator. Unfortunately, we cannot generate a transcript for this video.\n\n**Try a different video** that has subtitles enabled, or contact the video creator to enable subtitles.")
             elif "No transcript found" in str(api_error):
                 raise Exception("⚠️ **No Transcript Available**\n\nThis YouTube video doesn't have any transcript available. This could be because:\n\n• The creator hasn't enabled subtitles\n• The video is very old and never had transcripts generated\n• There are copyright restrictions\n\n**Try a different video** that has subtitles enabled.")
+            elif "YouTube is blocking requests" in str(api_error) or "IP has been blocked" in str(api_error):
+                raise Exception("🚫 **YouTube Blocking Issue**\n\nThis is a common issue on cloud platforms. Here are some solutions:\n\n**Option 1: Try a different video**\n• Some videos work better than others\n• Try videos with popular creators\n\n**Option 2: Wait a few minutes**\n• Sometimes the issue resolves itself\n• Try again in 5-10 minutes\n\n**Option 3: Use Local Deployment**\n• Run the app locally on your computer\n• Uses your IP instead of cloud IP\n• Usually works better than cloud deployment\n\n**Technical Note**: YouTube blocks requests from cloud provider IPs. This is a limitation of the YouTube API.")
             else:
                 raise Exception(f"Error fetching transcript: {api_error}")
 
